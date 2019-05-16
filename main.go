@@ -20,28 +20,34 @@ package main
 
 import (
 	"flag"
+	"net"
 
-	"github.com/golang/glog"
-	"github.com/google/go-microservice-helpers/server"
+	"github.com/zdnscloud/cement/log"
 
-	pb "github.com/google/lvmd/proto"
-	"github.com/google/lvmd/server"
+	pb "github.com/zdnscloud/node-agent/proto"
+	"github.com/zdnscloud/node-agent/server"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 )
 
 func main() {
+	var addr string
+	flag.StringVar(&addr, "listen", ":80", "server listen address")
 	flag.Parse()
-	defer glog.Flush()
+
+	log.InitLogger(log.Debug)
 
 	svr := server.NewServer()
-	grpcServer, _, err := serverhelpers.NewServer()
+	grpcServer := grpc.NewServer()
+	reflection.Register(grpcServer)
+	pb.RegisterNodeAgentServer(grpcServer, &svr)
+
+	lis, err := net.Listen("tcp", addr)
 	if err != nil {
-		glog.Fatalf("failed to init GRPC server: %v", err)
+		log.Fatalf("listen failed:%s", err.Error())
 	}
 
-	pb.RegisterLVMServer(grpcServer, &svr)
-
-	err = serverhelpers.ListenAndServe(grpcServer, nil)
-	if err != nil {
-		glog.Fatalf("failed to serve: %v", err)
+	if err := grpcServer.Serve(lis); err != nil {
+		log.Fatalf("run grpc server failed:%s", err.Error())
 	}
 }

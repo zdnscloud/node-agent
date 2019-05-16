@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package nodeagent;
+
+message GetDirectorySizeRequest {
+  string path = 1;
+}
+
+message GetDirectorySizeReply{
+  int64 size = 1;
+}
+
+service NodeAgent {
+ rpc GetDirectorySize(GetDirectorySizeRequest) returns (GetDirectorySizeReply) {}
+}
