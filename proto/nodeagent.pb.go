@@ -102,25 +102,159 @@ func (m *GetDirectorySizeReply) GetSize() int64 {
 	return 0
 }
 
+type GetBlockUsedSizeRequest struct {
+	Paths                []string `protobuf:"bytes,1,rep,name=paths,proto3" json:"paths,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetBlockUsedSizeRequest) Reset()         { *m = GetBlockUsedSizeRequest{} }
+func (m *GetBlockUsedSizeRequest) String() string { return proto.CompactTextString(m) }
+func (*GetBlockUsedSizeRequest) ProtoMessage()    {}
+func (*GetBlockUsedSizeRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b5331ae4b8115762, []int{2}
+}
+
+func (m *GetBlockUsedSizeRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetBlockUsedSizeRequest.Unmarshal(m, b)
+}
+func (m *GetBlockUsedSizeRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetBlockUsedSizeRequest.Marshal(b, m, deterministic)
+}
+func (m *GetBlockUsedSizeRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetBlockUsedSizeRequest.Merge(m, src)
+}
+func (m *GetBlockUsedSizeRequest) XXX_Size() int {
+	return xxx_messageInfo_GetBlockUsedSizeRequest.Size(m)
+}
+func (m *GetBlockUsedSizeRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetBlockUsedSizeRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetBlockUsedSizeRequest proto.InternalMessageInfo
+
+func (m *GetBlockUsedSizeRequest) GetPaths() []string {
+	if m != nil {
+		return m.Paths
+	}
+	return nil
+}
+
+type GetBlockUsedSizeReply struct {
+	Infos                []*GetBlockUsedSizeReplyInfo `protobuf:"bytes,1,rep,name=infos,proto3" json:"infos,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                     `json:"-"`
+	XXX_unrecognized     []byte                       `json:"-"`
+	XXX_sizecache        int32                        `json:"-"`
+}
+
+func (m *GetBlockUsedSizeReply) Reset()         { *m = GetBlockUsedSizeReply{} }
+func (m *GetBlockUsedSizeReply) String() string { return proto.CompactTextString(m) }
+func (*GetBlockUsedSizeReply) ProtoMessage()    {}
+func (*GetBlockUsedSizeReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b5331ae4b8115762, []int{3}
+}
+
+func (m *GetBlockUsedSizeReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetBlockUsedSizeReply.Unmarshal(m, b)
+}
+func (m *GetBlockUsedSizeReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetBlockUsedSizeReply.Marshal(b, m, deterministic)
+}
+func (m *GetBlockUsedSizeReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetBlockUsedSizeReply.Merge(m, src)
+}
+func (m *GetBlockUsedSizeReply) XXX_Size() int {
+	return xxx_messageInfo_GetBlockUsedSizeReply.Size(m)
+}
+func (m *GetBlockUsedSizeReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetBlockUsedSizeReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetBlockUsedSizeReply proto.InternalMessageInfo
+
+func (m *GetBlockUsedSizeReply) GetInfos() []*GetBlockUsedSizeReplyInfo {
+	if m != nil {
+		return m.Infos
+	}
+	return nil
+}
+
+type GetBlockUsedSizeReplyInfo struct {
+	Path                 string   `protobuf:"bytes,1,opt,name=path,proto3" json:"path,omitempty"`
+	Size                 int64    `protobuf:"varint,2,opt,name=size,proto3" json:"size,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *GetBlockUsedSizeReplyInfo) Reset()         { *m = GetBlockUsedSizeReplyInfo{} }
+func (m *GetBlockUsedSizeReplyInfo) String() string { return proto.CompactTextString(m) }
+func (*GetBlockUsedSizeReplyInfo) ProtoMessage()    {}
+func (*GetBlockUsedSizeReplyInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b5331ae4b8115762, []int{3, 0}
+}
+
+func (m *GetBlockUsedSizeReplyInfo) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_GetBlockUsedSizeReplyInfo.Unmarshal(m, b)
+}
+func (m *GetBlockUsedSizeReplyInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_GetBlockUsedSizeReplyInfo.Marshal(b, m, deterministic)
+}
+func (m *GetBlockUsedSizeReplyInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GetBlockUsedSizeReplyInfo.Merge(m, src)
+}
+func (m *GetBlockUsedSizeReplyInfo) XXX_Size() int {
+	return xxx_messageInfo_GetBlockUsedSizeReplyInfo.Size(m)
+}
+func (m *GetBlockUsedSizeReplyInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_GetBlockUsedSizeReplyInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GetBlockUsedSizeReplyInfo proto.InternalMessageInfo
+
+func (m *GetBlockUsedSizeReplyInfo) GetPath() string {
+	if m != nil {
+		return m.Path
+	}
+	return ""
+}
+
+func (m *GetBlockUsedSizeReplyInfo) GetSize() int64 {
+	if m != nil {
+		return m.Size
+	}
+	return 0
+}
+
 func init() {
 	proto.RegisterType((*GetDirectorySizeRequest)(nil), "nodeagent.GetDirectorySizeRequest")
 	proto.RegisterType((*GetDirectorySizeReply)(nil), "nodeagent.GetDirectorySizeReply")
+	proto.RegisterType((*GetBlockUsedSizeRequest)(nil), "nodeagent.GetBlockUsedSizeRequest")
+	proto.RegisterType((*GetBlockUsedSizeReply)(nil), "nodeagent.GetBlockUsedSizeReply")
+	proto.RegisterType((*GetBlockUsedSizeReplyInfo)(nil), "nodeagent.GetBlockUsedSizeReply.info")
 }
 
 func init() { proto.RegisterFile("nodeagent.proto", fileDescriptor_b5331ae4b8115762) }
 
 var fileDescriptor_b5331ae4b8115762 = []byte{
-	// 149 bytes of a gzipped FileDescriptorProto
+	// 245 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0xcf, 0xcb, 0x4f, 0x49,
 	0x4d, 0x4c, 0x4f, 0xcd, 0x2b, 0xd1, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0xe2, 0x84, 0x0b, 0x28,
 	0xe9, 0x72, 0x89, 0xbb, 0xa7, 0x96, 0xb8, 0x64, 0x16, 0xa5, 0x26, 0x97, 0xe4, 0x17, 0x55, 0x06,
 	0x67, 0x56, 0xa5, 0x06, 0xa5, 0x16, 0x96, 0xa6, 0x16, 0x97, 0x08, 0x09, 0x71, 0xb1, 0x14, 0x24,
 	0x96, 0x64, 0x48, 0x30, 0x2a, 0x30, 0x6a, 0x70, 0x06, 0x81, 0xd9, 0x4a, 0xda, 0x5c, 0xa2, 0x98,
 	0xca, 0x0b, 0x72, 0x2a, 0x41, 0x8a, 0x8b, 0x33, 0xab, 0x52, 0xc1, 0x8a, 0x99, 0x83, 0xc0, 0x6c,
-	0xa3, 0x74, 0x2e, 0x4e, 0xbf, 0xfc, 0x94, 0x54, 0x47, 0x90, 0x45, 0x42, 0x51, 0x5c, 0x02, 0xe8,
-	0x3a, 0x85, 0x94, 0xf4, 0x10, 0x2e, 0xc3, 0xe1, 0x0a, 0x29, 0x05, 0xbc, 0x6a, 0x0a, 0x72, 0x2a,
-	0x95, 0x18, 0x92, 0xd8, 0xc0, 0xde, 0x32, 0x06, 0x04, 0x00, 0x00, 0xff, 0xff, 0x21, 0x07, 0xef,
-	0xf8, 0xe9, 0x00, 0x00, 0x00,
+	0x25, 0x7d, 0xb0, 0xd9, 0x4e, 0x39, 0xf9, 0xc9, 0xd9, 0xa1, 0xc5, 0xa9, 0x29, 0xc8, 0x66, 0x8b,
+	0x70, 0xb1, 0x82, 0xcc, 0x2b, 0x96, 0x60, 0x54, 0x60, 0xd6, 0xe0, 0x0c, 0x82, 0x70, 0x94, 0x5a,
+	0x18, 0xc1, 0xc6, 0xa3, 0xe9, 0x00, 0x19, 0x6f, 0xcd, 0xc5, 0x9a, 0x99, 0x97, 0x96, 0x0f, 0x51,
+	0xcf, 0x6d, 0xa4, 0xaa, 0x87, 0xf0, 0x12, 0x56, 0x0d, 0x7a, 0x20, 0xd5, 0x41, 0x10, 0x3d, 0x52,
+	0x7a, 0x5c, 0x2c, 0x20, 0x06, 0x36, 0x0f, 0xc1, 0xdd, 0xcd, 0x84, 0x70, 0xb7, 0xd1, 0x71, 0x46,
+	0x2e, 0x4e, 0xbf, 0xfc, 0x94, 0x54, 0x47, 0x90, 0xf9, 0x42, 0x51, 0x5c, 0x02, 0xe8, 0x5e, 0x16,
+	0x52, 0x42, 0xb5, 0x1f, 0x5b, 0xf0, 0x49, 0x29, 0xe0, 0x55, 0x53, 0x90, 0x53, 0xa9, 0xc4, 0x20,
+	0x14, 0xc7, 0x25, 0x82, 0xee, 0x7c, 0x6c, 0xe6, 0x63, 0x0b, 0x42, 0x74, 0xf3, 0x31, 0xc3, 0x40,
+	0x89, 0x21, 0x89, 0x0d, 0x1c, 0xdf, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0x05, 0x7f, 0x83,
+	0xff, 0x02, 0x02, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -136,6 +270,7 @@ const _ = grpc.SupportPackageIsVersion4
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type NodeAgentClient interface {
 	GetDirectorySize(ctx context.Context, in *GetDirectorySizeRequest, opts ...grpc.CallOption) (*GetDirectorySizeReply, error)
+	GetBlockUsedSizeSize(ctx context.Context, in *GetBlockUsedSizeRequest, opts ...grpc.CallOption) (*GetBlockUsedSizeReply, error)
 }
 
 type nodeAgentClient struct {
@@ -155,9 +290,19 @@ func (c *nodeAgentClient) GetDirectorySize(ctx context.Context, in *GetDirectory
 	return out, nil
 }
 
+func (c *nodeAgentClient) GetBlockUsedSizeSize(ctx context.Context, in *GetBlockUsedSizeRequest, opts ...grpc.CallOption) (*GetBlockUsedSizeReply, error) {
+	out := new(GetBlockUsedSizeReply)
+	err := c.cc.Invoke(ctx, "/nodeagent.NodeAgent/GetBlockUsedSizeSize", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // NodeAgentServer is the server API for NodeAgent service.
 type NodeAgentServer interface {
 	GetDirectorySize(context.Context, *GetDirectorySizeRequest) (*GetDirectorySizeReply, error)
+	GetBlockUsedSizeSize(context.Context, *GetBlockUsedSizeRequest) (*GetBlockUsedSizeReply, error)
 }
 
 // UnimplementedNodeAgentServer can be embedded to have forward compatible implementations.
@@ -166,6 +311,9 @@ type UnimplementedNodeAgentServer struct {
 
 func (*UnimplementedNodeAgentServer) GetDirectorySize(ctx context.Context, req *GetDirectorySizeRequest) (*GetDirectorySizeReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDirectorySize not implemented")
+}
+func (*UnimplementedNodeAgentServer) GetBlockUsedSizeSize(ctx context.Context, req *GetBlockUsedSizeRequest) (*GetBlockUsedSizeReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBlockUsedSizeSize not implemented")
 }
 
 func RegisterNodeAgentServer(s *grpc.Server, srv NodeAgentServer) {
@@ -190,6 +338,24 @@ func _NodeAgent_GetDirectorySize_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _NodeAgent_GetBlockUsedSizeSize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBlockUsedSizeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NodeAgentServer).GetBlockUsedSizeSize(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nodeagent.NodeAgent/GetBlockUsedSizeSize",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NodeAgentServer).GetBlockUsedSizeSize(ctx, req.(*GetBlockUsedSizeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _NodeAgent_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "nodeagent.NodeAgent",
 	HandlerType: (*NodeAgentServer)(nil),
@@ -197,6 +363,10 @@ var _NodeAgent_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDirectorySize",
 			Handler:    _NodeAgent_GetDirectorySize_Handler,
+		},
+		{
+			MethodName: "GetBlockUsedSizeSize",
+			Handler:    _NodeAgent_GetBlockUsedSizeSize_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
