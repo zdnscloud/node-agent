@@ -3,7 +3,6 @@ package server
 import (
 	"path/filepath"
 
-	"bytes"
 	"golang.org/x/net/context"
 	"os"
 	"os/exec"
@@ -45,50 +44,30 @@ func getDirectorySize(path string) (int64, error) {
 }
 
 func (s Server) GetBlockUsedSizeSize(ctx context.Context, in *pb.GetBlockUsedSizeRequest) (*pb.GetBlockUsedSizeReply, error) {
-	infos := make([]*pb.GetBlockUsedSizeReplyInfo, 0)
-	for _, p := range in.Paths {
-		size, err := getBlockUsedSize(p)
-		if err != nil {
-			return nil, err
-		} else {
-			info := &pb.GetBlockUsedSizeReplyInfo{
-				Path: p,
-				Size: size,
-			}
-			infos = append(infos, info)
-		}
-	}
+	infos, err := getBlockUsedSize(in.Paths)
 	return &pb.GetBlockUsedSizeReply{
 		Infos: infos,
-	}, nil
+	}, err
 }
 
-func getBlockUsedSize(path string) (int64, error) {
-	var size int64
-	cmds := []*exec.Cmd{
-		exec.Command("df"),
-		exec.Command("grep", path),
-		exec.Command("awk", "{print $3}"),
+func getBlockUsedSize(paths []string) (map[string]int64, error) {
+	infos := make(map[string]int64)
+	out, err := exec.Command("df", paths...).Output()
+	if err != nil {
+		return infos, err
 	}
-	for i := 1; i < len(cmds); i++ {
-		var err error
-		if cmds[i].Stdin, err = cmds[i-1].StdoutPipe(); err != nil {
-			return size, err
-		}
 
-	}
-	var output bytes.Buffer
-	cmds[len(cmds)-1].Stdout = &output
-	for _, cmd := range cmds {
-		if err := cmd.Start(); err != nil {
-			return size, err
+	outputs := strings.Split(string(out), "\n")
+	for i := 1; i < len(outputs); i++ {
+		if strings.Contains(outputs[i], "pvc-") && strings.Contains(outputs[i], "/var/lib/kubelet") {
+			line := strings.Fields(outputs[i])
+			num := len(line)
+			size, err := strconv.ParseInt(line[num-4], 10, 64)
+			if err != nil {
+				return infos, err
+			}
+			infos[line[num-1]] = size
 		}
 	}
-	for _, cmd := range cmds {
-		if err := cmd.Wait(); err != nil {
-			return size, err
-		}
-	}
-	size, err := strconv.ParseInt(strings.Replace(string(output.Bytes()), "\n", "", -1), 10, 64)
-	return size, err
+	return infos, nil
 }
