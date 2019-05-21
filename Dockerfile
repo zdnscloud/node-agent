@@ -1,8 +1,14 @@
-FROM alpine:latest
+FROM golang:alpine AS build
+  
+RUN mkdir -p /go/src/github.com/zdnscloud/node-agent
+COPY . /go/src/github.com/zdnscloud/node-agent
 
-RUN set -ex; \
-  apk add --no-cache --no-progress --virtual .build-deps git gcc musl-dev openssh bash go; \
-  env GOPATH=/go go get -v github.com/google/lvmd; \
-  install -t /bin /go/bin/lvmd; \
-  rm -rf /go; \
-  apk --no-progress del .build-deps
+WORKDIR /go/src/github.com/zdnscloud/node-agent
+RUN CGO_ENABLED=0 GOOS=linux go build -o /go/src/github.com/zdnscloud/node-agent/node-agent
+
+FROM alpine
+
+LABEL maintainers="Zdns Authors"
+LABEL description="Node Agent"
+COPY --from=build /go/src/github.com/zdnscloud/node-agent/node-agent /node-agent
+ENTRYPOINT ["/bin/sh"]

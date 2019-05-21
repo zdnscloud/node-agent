@@ -1,11 +1,11 @@
 package server
 
 import (
-	"os"
 	"path/filepath"
 
+	"bytes"
 	"golang.org/x/net/context"
-	"io/ioutil"
+	"os"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -65,23 +65,30 @@ func (s Server) GetBlockUsedSizeSize(ctx context.Context, in *pb.GetBlockUsedSiz
 
 func getBlockUsedSize(path string) (int64, error) {
 	var size int64
-	command := "df " + path + "|tail -n1|awk '{print $3}'"
-	cmd := exec.Command("/bin/bash", "-c", command)
-	stdout, err := cmd.StdoutPipe()
-	if err != nil {
-		return size, err
+	cmds := []*exec.Cmd{
+		exec.Command("df"),
+		exec.Command("grep", path),
+		exec.Command("awk", "{print $3}"),
 	}
-	if err := cmd.Start(); err != nil {
-		return size, err
+	for i := 1; i < len(cmds); i++ {
+		var err error
+		if cmds[i].Stdin, err = cmds[i-1].StdoutPipe(); err != nil {
+			return size, err
+		}
+
 	}
-	bytes, err := ioutil.ReadAll(stdout)
-	if err != nil {
-		return size, err
+	var output bytes.Buffer
+	cmds[len(cmds)-1].Stdout = &output
+	for _, cmd := range cmds {
+		if err := cmd.Start(); err != nil {
+			return size, err
+		}
 	}
-	if err := cmd.Wait(); err != nil {
-		return size, err
+	for _, cmd := range cmds {
+		if err := cmd.Wait(); err != nil {
+			return size, err
+		}
 	}
-	s := strings.Replace(string(bytes[:]), "\n", "", -1)
-	size, err = strconv.ParseInt(s, 10, 64)
+	size, err := strconv.ParseInt(strings.Replace(string(output.Bytes()), "\n", "", -1), 10, 64)
 	return size, err
 }
