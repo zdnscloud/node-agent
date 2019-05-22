@@ -44,30 +44,36 @@ func getDirectorySize(path string) (int64, error) {
 }
 
 func (s Server) GetBlockUsedSizeSize(ctx context.Context, in *pb.GetBlockUsedSizeRequest) (*pb.GetBlockUsedSizeReply, error) {
-	infos, err := getBlockUsedSize(in.Paths)
+	infos, err := getBlockUsedSize(in.Paths, in.Type)
 	return &pb.GetBlockUsedSizeReply{
 		Infos: infos,
 	}, err
 }
 
-func getBlockUsedSize(paths []string) (map[string]int64, error) {
+func getBlockUsedSize(paths []string, t string) (map[string]int64, error) {
 	infos := make(map[string]int64)
-	out, err := exec.Command("df", paths...).Output()
-	if err != nil {
-		return infos, err
-	}
-
+	out, _ := exec.Command("df", paths...).Output()
 	outputs := strings.Split(string(out), "\n")
+	n := 4
+	switch t {
+	case "t":
+		n = 5
+	case "u":
+		n = 4
+	case "f":
+		n = 3
+	}
 	for i := 1; i < len(outputs); i++ {
-		if strings.Contains(outputs[i], "pvc-") && strings.Contains(outputs[i], "/var/lib/kubelet") {
-			line := strings.Fields(outputs[i])
-			num := len(line)
-			size, err := strconv.ParseInt(line[num-4], 10, 64)
-			if err != nil {
-				return infos, err
-			}
-			infos[line[num-1]] = size
+		if !strings.Contains(outputs[i], "%") {
+			continue
 		}
+		line := strings.Fields(outputs[i])
+		num := len(line)
+		size, err := strconv.ParseInt(line[num-n], 10, 64)
+		if err != nil {
+			return infos, err
+		}
+		infos[line[num-1]] = size
 	}
 	return infos, nil
 }
