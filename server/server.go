@@ -1,10 +1,7 @@
 package server
 
 import (
-	"path/filepath"
-
 	"golang.org/x/net/context"
-	"os"
 	"os/exec"
 	"strconv"
 	"strings"
@@ -19,61 +16,65 @@ func NewServer() Server {
 }
 
 func (s Server) GetDirectorySize(ctx context.Context, in *pb.GetDirectorySizeRequest) (*pb.GetDirectorySizeReply, error) {
-	size, err := getDirectorySize(in.Path)
-	if err != nil {
-		return nil, err
-	} else {
-		return &pb.GetDirectorySizeReply{
-			Size: size,
-		}, nil
-	}
-}
-
-func getDirectorySize(path string) (int64, error) {
-	var size int64
-	err := filepath.Walk(path, func(p string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if !info.IsDir() {
-			size += info.Size()
-		}
-		return err
-	})
-	return size, err
-}
-
-func (s Server) GetBlockUsedSizeSize(ctx context.Context, in *pb.GetBlockUsedSizeRequest) (*pb.GetBlockUsedSizeReply, error) {
-	infos, err := getBlockUsedSize(in.Paths, in.Type)
-	return &pb.GetBlockUsedSizeReply{
+	infos, err := getDirectorySize(in.Path)
+	return &pb.GetDirectorySizeReply{
 		Infos: infos,
 	}, err
 }
 
-func getBlockUsedSize(paths []string, t string) (map[string]int64, error) {
+func getDirectorySize(path string) (map[string]int64, error) {
 	infos := make(map[string]int64)
+	out, _ := exec.Command("du", "-d1", path).Output()
+	outputs := strings.Split(string(out), "\n")
+	for _, l := range outputs {
+		if !strings.Contains(l, "/") {
+			continue
+		}
+		line := strings.Fields(l)
+		size, err := strconv.ParseInt(line[0], 10, 64)
+		if err != nil {
+			return infos, err
+		}
+		infos[line[1]] = size
+	}
+	delete(infos, path)
+	return infos, nil
+}
+
+func (s Server) GetMountpointsSize(ctx context.Context, in *pb.GetMountpointsSizeRequest) (*pb.GetMountpointsSizeReply, error) {
+	infos, err := getMountpointsSize(in.Paths)
+	return &pb.GetMountpointsSizeReply{
+		Infos: infos,
+	}, err
+}
+
+func getMountpointsSize(paths []string) (map[string]*pb.Sizes, error) {
+	infos := make(map[string]*pb.Sizes)
 	out, _ := exec.Command("df", paths...).Output()
 	outputs := strings.Split(string(out), "\n")
-	n := 4
-	switch t {
-	case "t":
-		n = 5
-	case "u":
-		n = 4
-	case "f":
-		n = 3
-	}
 	for i := 1; i < len(outputs); i++ {
 		if !strings.Contains(outputs[i], "%") {
 			continue
 		}
 		line := strings.Fields(outputs[i])
 		num := len(line)
-		size, err := strconv.ParseInt(line[num-n], 10, 64)
+		tsize, err := strconv.ParseInt(line[num-5], 10, 64)
 		if err != nil {
 			return infos, err
 		}
-		infos[line[num-1]] = size
+		usize, err := strconv.ParseInt(line[num-4], 10, 64)
+		if err != nil {
+			return infos, err
+		}
+		fsize, err := strconv.ParseInt(line[num-3], 10, 64)
+		if err != nil {
+			return infos, err
+		}
+		infos[line[num-1]] = &pb.Sizes{
+			Tsize: tsize,
+			Usize: usize,
+			Fsize: fsize,
+		}
 	}
 	return infos, nil
 }
