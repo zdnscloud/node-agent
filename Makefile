@@ -1,5 +1,5 @@
 REGISTRY_NAME = zdnscloud/node-agent
-IMAGE_VERSION = v1.0
+IMAGE_VERSION = v1.1
 
 all: grpc
 
