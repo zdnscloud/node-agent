@@ -1,9 +1,5 @@
 FROM golang:1.12.5-alpine3.9 AS build
-<<<<<<< HEAD
 
-=======
-  
->>>>>>> getblocks
 RUN mkdir -p /go/src/github.com/zdnscloud/node-agent
 COPY . /go/src/github.com/zdnscloud/node-agent
 
