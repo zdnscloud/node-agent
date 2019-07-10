@@ -10,5 +10,6 @@ FROM alpine:3.9.4
 
 LABEL maintainers="Zdns Authors"
 LABEL description="Node Agent"
+RUN apk update && apk add util-linux --no-cache
 COPY --from=build /go/src/github.com/zdnscloud/node-agent/node-agent /node-agent
 ENTRYPOINT ["/bin/sh"]
