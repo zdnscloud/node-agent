@@ -120,6 +120,12 @@ func getDisksInfo(disk string) (map[string]*pb.Diskinfo, error) {
 				mountpoint = "true"
 			}
 		}
+		if d.FSTYPE != "" {
+			fsexist = "true"
+		}
+		if d.MOUNTPOINT != "" {
+			mountpoint = "true"
+		}
 		info := make(map[string]string)
 		info["Size"] = strconv.FormatInt(d.SIZE, 10)
 		info["Parted"] = parted
