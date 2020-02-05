@@ -1,5 +1,11 @@
 REGISTRY_NAME = zdnscloud/node-agent
-IMAGE_VERSION = v1.3
+IMAGE_VERSION = latest
+
+BRANCH=`git branch | sed -n '/\* /s///p'`
+VERSION=`git describe --tags`
+BUILD=`date +%FT%T%z`
+
+LDFLAGS=-ldflags "-w -s -X main.version=${VERSION} -X main.build=${BUILD}"
 
 all: grpc
 
@@ -12,6 +18,13 @@ clean:
 	rm -f proto/nodeagent.pb.go
 
 container:
-	docker build -t $(REGISTRY_NAME):$(IMAGE_VERSION) ./ --no-cache
+	go mod vendor
+	#docker build -t $(REGISTRY_NAME):${BRANCH} --build-arg version=${VERSION} --build-arg buildtime=${BUILD} --no-cache .
+	docker build -t $(REGISTRY_NAME):${IMAGE_VERSION} --build-arg version=${VERSION} --build-arg buildtime=${BUILD} --no-cache .
+	docker image prune -f
+	rm -fr vendor
+
+build:
+	CGO_ENABLED=0 GOOS=linux go build ${LDFLAGS}
 
 .PHONY: all clean
