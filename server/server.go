@@ -38,37 +38,36 @@ func (s Server) GetDisksInfo(ctx context.Context, in *pb.GetDisksInfoRequest) (*
 
 func (s Server) IscsiDiscovery(ctx context.Context, in *pb.IscsiDiscoveryRequest) (*pb.IscsiDiscoveryReply, error) {
 	addr := in.Host + ":" + in.Port
-	output, err := command.DiscoverTarget(addr, in.Iqn)
+	if err := command.DiscoverTarget(addr, in.Iqn); err != nil {
+		return nil, err
+	}
+	ok, err := command.IsTargetDiscovered(addr, in.Iqn)
 	if err != nil {
-		return nil, fmt.Errorf("%v, command output: %s", err, output)
+		return nil, err
 	}
-	output, ok := command.IsTargetDiscovered(addr, in.Iqn)
 	if !ok {
-		return nil, fmt.Errorf("iscsi check discovery faild, command output: %s", output)
+		return nil, fmt.Errorf("iscsi check discovery faild")
 	}
-	return nil, nil
+	return &pb.IscsiDiscoveryReply{}, nil
 }
 
 func (s Server) IscsiChap(ctx context.Context, in *pb.IscsiChapRequest) (*pb.IscsiChapReply, error) {
-	output, err := command.IscsiChap(in.Host+":"+in.Port, in.Iqn, in.Username, in.Password)
-	if err != nil {
-		return nil, fmt.Errorf("%v, command output: %s", err, output)
+	if err := command.IscsiChap(in.Host+":"+in.Port, in.Iqn, in.Username, in.Password); err != nil {
+		return nil, err
 	}
-	return nil, nil
+	return &pb.IscsiChapReply{}, nil
 }
 func (s Server) IscsiLogin(ctx context.Context, in *pb.IscsiLoginRequest) (*pb.IscsiLoginReply, error) {
-	output, err := command.LoginTarget(in.Host+":"+in.Port, in.Iqn)
-	if err != nil {
-		return nil, fmt.Errorf("%v, command output: %s", err, output)
+	if err := command.LoginTarget(in.Host+":"+in.Port, in.Iqn); err != nil {
+		return nil, err
 	}
-	return nil, nil
+	return &pb.IscsiLoginReply{}, nil
 }
 func (s Server) IscsiLogout(ctx context.Context, in *pb.IscsiLogoutRequest) (*pb.IscsiLogoutReply, error) {
-	output, err := command.LogoutTarget(in.Host+":"+in.Port, in.Iqn)
-	if err != nil {
-		return nil, fmt.Errorf("%v, command output: %s", err, output)
+	if err := command.LogoutTarget(in.Host+":"+in.Port, in.Iqn); err != nil {
+		return nil, err
 	}
-	return nil, nil
+	return &pb.IscsiLogoutReply{}, nil
 }
 func (s Server) IscsiGetBlocks(ctx context.Context, in *pb.IscsiGetBlocksRequest) (*pb.IscsiGetBlocksReply, error) {
 	output, err := command.GetIscsiDevices(in.Host, in.Iqn)
@@ -94,4 +93,11 @@ func (s Server) IscsiGetMultipaths(ctx context.Context, in *pb.IscsiGetMultipath
 	return &pb.IscsiGetMultipathsReply{
 		Dev: path,
 	}, nil
+}
+
+func (s Server) ReplaceInitiatorname(ctx context.Context, in *pb.ReplaceInitiatornameRequest) (*pb.ReplaceInitiatornameReply, error) {
+	if err := command.ReplaceInitiatorname(in.SrcFile, in.DstFile); err != nil {
+		return nil, err
+	}
+	return &pb.ReplaceInitiatornameReply{}, nil
 }

@@ -11,6 +11,6 @@ FROM ubuntu:14.04
 LABEL maintainers="Zdns Authors"
 LABEL description="Node Agent"
 
-RUN apt-get update && apt-get install util-linux udev open-iscsi lvm2 lsscsi -y
+RUN apt-get update && apt-get install util-linux udev open-iscsi lvm2 lsscsi multipath-tools -y
 COPY --from=build /go/src/github.com/zdnscloud/node-agent/node-agent /node-agent
 ENTRYPOINT ["/bin/sh"]

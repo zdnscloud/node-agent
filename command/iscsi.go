@@ -5,6 +5,8 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"io"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
@@ -15,6 +17,7 @@ const (
 	iscsiBinary     = "iscsiadm"
 	multipathBinary = "multipath"
 	lsscsiBinary    = "lsscsi"
+	BUFFERSIZE      = 1000
 )
 
 var (
@@ -28,7 +31,35 @@ var (
 	cmdTimeout = time.Minute // one minute by default
 )
 
-func DiscoverTarget(ip, target string) (string, error) {
+func ReplaceInitiatorname(src, dst string) error {
+	source, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer source.Close()
+	destination, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer destination.Close()
+	buf := make([]byte, BUFFERSIZE)
+	for {
+		n, err := source.Read(buf)
+		if err != nil && err != io.EOF {
+			return err
+		}
+		if n == 0 {
+			break
+		}
+
+		if _, err := destination.Write(buf[:n]); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func DiscoverTarget(ip, target string) error {
 	opts := []string{
 		"-m", "discovery",
 		"-t", "sendtargets",
@@ -36,28 +67,32 @@ func DiscoverTarget(ip, target string) (string, error) {
 	}
 	output, err := execute(iscsiBinary, opts)
 	if err != nil {
-		return output, err
+		return fmt.Errorf("discover failed. command out: %s, err: %v", output, err)
 	}
 	if strings.Contains(output, "Could not") {
-		return output, fmt.Errorf("Cannot discover target: %s", output)
+		return fmt.Errorf("Cannot discover target: %s", output)
 	}
 	if !strings.Contains(output, target) {
-		return output, fmt.Errorf("Cannot find target %s in discovered targets %s", target, output)
+		return fmt.Errorf("Cannot find target %s in discovered targets %s", target, output)
 	}
-	return output, nil
+	return nil
 }
 
-func DeleteDiscoveredTarget(ip, target string) (string, error) {
+func DeleteDiscoveredTarget(ip, target string) error {
 	opts := []string{
 		"-m", "node",
 		"-o", "delete",
 		"-p", ip,
 		"-T", target,
 	}
-	return execute(iscsiBinary, opts)
+	output, err := execute(iscsiBinary, opts)
+	if err != nil {
+		return fmt.Errorf("delete discover failed. command out: %s, err: %v", output, err)
+	}
+	return nil
 }
 
-func IsTargetDiscovered(ip, target string) (string, bool) {
+func IsTargetDiscovered(ip, target string) (bool, error) {
 	opts := []string{
 		"-m", "node",
 		"-T", target,
@@ -65,12 +100,12 @@ func IsTargetDiscovered(ip, target string) (string, bool) {
 	}
 	output, err := execute(iscsiBinary, opts)
 	if err != nil {
-		return output, false
+		return false, fmt.Errorf("check discover failed. command out: %s, err: %v", output, err)
 	}
-	return output, true
+	return true, nil
 }
 
-func IscsiChap(ip, target, username, password string) (string, error) {
+func IscsiChap(ip, target, username, password string) error {
 	opts := []string{
 		"-m", "node",
 		"-T", target,
@@ -91,27 +126,31 @@ func IscsiChap(ip, target, username, password string) (string, error) {
 	}
 	output, err := execute(iscsiBinary, append(opts, chapOpts...))
 	if err != nil {
-		return output, err
+		return fmt.Errorf("turn on chap failed. command out: %s, err: %v", output, err)
 	}
 	output, err = execute(iscsiBinary, append(opts, userOpts...))
 	if err != nil {
-		return output, err
+		return fmt.Errorf("add username failed. command out: %s, err: %v", output, err)
 	}
 	output, err = execute(iscsiBinary, append(opts, passOpts...))
 	if err != nil {
-		return output, err
+		return fmt.Errorf("add password failed. command out: %s, err: %v", output, err)
 	}
-	return output, nil
+	return nil
 }
 
-func LoginTarget(ip, target string) (string, error) {
+func LoginTarget(ip, target string) error {
 	opts := []string{
 		"-m", "node",
 		"-T", target,
 		"-p", ip,
 		"--login",
 	}
-	return execute(iscsiBinary, opts)
+	output, err := execute(iscsiBinary, opts)
+	if err != nil {
+		return fmt.Errorf("login target failed. command out: %s, err: %v", output, err)
+	}
+	return nil
 }
 
 func GetIscsiDevices(ip, target string) (map[string][]string, error) {
@@ -190,7 +229,7 @@ func findScsiDevice(ip, target string) (map[string][]string, error) {
 	return devs, nil
 }
 
-func LogoutTarget(ip, target string) (string, error) {
+func LogoutTarget(ip, target string) error {
 	opts := []string{
 		"-m", "node",
 		"-T", target,
@@ -199,10 +238,14 @@ func LogoutTarget(ip, target string) (string, error) {
 	if ip != "" {
 		opts = append(opts, "-p", ip)
 	}
-	return execute(iscsiBinary, opts)
+	output, err := execute(iscsiBinary, opts)
+	if err != nil {
+		return fmt.Errorf("turn on chap failed. command out: %s, err: %v", output, err)
+	}
+	return nil
 }
 
-func CleanupScsiNodes(target string) (string, error) {
+func CleanupScsiNodes(target string) error {
 	for _, dir := range ScsiNodesDirs {
 		if _, err := execute("ls", []string{dir}); err != nil {
 			continue
@@ -213,24 +256,24 @@ func CleanupScsiNodes(target string) (string, error) {
 		}
 		output, err := execute("find", []string{targetDir})
 		if err != nil {
-			return output, fmt.Errorf("Failed to search SCSI directory %v: %v", targetDir, err)
+			return fmt.Errorf("Failed to search SCSI directory %v, command output: %s, err: %v", targetDir, output, err)
 		}
 		scanner := bufio.NewScanner(strings.NewReader(output))
 		for scanner.Scan() {
 			file := scanner.Text()
 			output, err := execute("stat", []string{file})
 			if err != nil {
-				return output, fmt.Errorf("Failed to check SCSI node file %v: %v", file, err)
+				return fmt.Errorf("Failed to check SCSI node file %v, command output: %s, err: %v", file, output, err)
 			}
 			if strings.Contains(output, "regular empty file") {
 				if output, err := execute("rm", []string{file}); err != nil {
-					return output, fmt.Errorf("Failed to cleanup empty SCSI node file %v: %v", file, err)
+					return fmt.Errorf("Failed to cleanup empty SCSI node file %v, command output: %s, err: %v", file, output, err)
 				}
 				execute("rmdir", []string{filepath.Dir(file)})
 			}
 		}
 	}
-	return "", nil
+	return nil
 }
 
 func GetIscsiMultipath(devs []string) (string, error) {
