@@ -1,6 +1,8 @@
 package server
 
 import (
+	"fmt"
+
 	"golang.org/x/net/context"
 
 	"github.com/zdnscloud/node-agent/command"
@@ -32,4 +34,64 @@ func (s Server) GetDisksInfo(ctx context.Context, in *pb.GetDisksInfoRequest) (*
 	return &pb.GetDisksInfoReply{
 		Infos: infos,
 	}, err
+}
+
+func (s Server) IscsiDiscovery(ctx context.Context, in *pb.IscsiDiscoveryRequest) (*pb.IscsiDiscoveryReply, error) {
+	addr := in.Host + ":" + in.Port
+	output, err := command.DiscoverTarget(addr, in.Iqn)
+	if err != nil {
+		return nil, fmt.Errorf("%v, command output: %s", err, output)
+	}
+	output, ok := command.IsTargetDiscovered(addr, in.Iqn)
+	if !ok {
+		return nil, fmt.Errorf("iscsi check discovery faild, command output: %s", output)
+	}
+	return nil, nil
+}
+
+func (s Server) IscsiChap(ctx context.Context, in *pb.IscsiChapRequest) (*pb.IscsiChapReply, error) {
+	output, err := command.IscsiChap(in.Host+":"+in.Port, in.Iqn, in.Username, in.Password)
+	if err != nil {
+		return nil, fmt.Errorf("%v, command output: %s", err, output)
+	}
+	return nil, nil
+}
+func (s Server) IscsiLogin(ctx context.Context, in *pb.IscsiLoginRequest) (*pb.IscsiLoginReply, error) {
+	output, err := command.LoginTarget(in.Host+":"+in.Port, in.Iqn)
+	if err != nil {
+		return nil, fmt.Errorf("%v, command output: %s", err, output)
+	}
+	return nil, nil
+}
+func (s Server) IscsiLogout(ctx context.Context, in *pb.IscsiLogoutRequest) (*pb.IscsiLogoutReply, error) {
+	output, err := command.LogoutTarget(in.Host+":"+in.Port, in.Iqn)
+	if err != nil {
+		return nil, fmt.Errorf("%v, command output: %s", err, output)
+	}
+	return nil, nil
+}
+func (s Server) IscsiGetBlocks(ctx context.Context, in *pb.IscsiGetBlocksRequest) (*pb.IscsiGetBlocksReply, error) {
+	output, err := command.GetIscsiDevices(in.Host, in.Iqn)
+	if err != nil {
+		return nil, err
+	}
+	info := make(map[string]*pb.IscsiDevice)
+	for lun, devs := range output {
+		info[lun] = &pb.IscsiDevice{
+			Blocks: devs,
+		}
+	}
+	return &pb.IscsiGetBlocksReply{
+		IscsiBlock: info,
+	}, nil
+}
+
+func (s Server) IscsiGetMultipaths(ctx context.Context, in *pb.IscsiGetMultipathsRequest) (*pb.IscsiGetMultipathsReply, error) {
+	path, err := command.GetIscsiMultipath(in.Devs)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.IscsiGetMultipathsReply{
+		Dev: path,
+	}, nil
 }

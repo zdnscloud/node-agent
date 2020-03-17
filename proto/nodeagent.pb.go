@@ -181,9 +181,9 @@ func (m *GetMountpointsSizeReply) GetInfos() map[string]*Sizes {
 }
 
 type Sizes struct {
-	Tsize                int64    `protobuf:"varint,1,opt,name=Tsize,proto3" json:"Tsize,omitempty"`
-	Usize                int64    `protobuf:"varint,2,opt,name=Usize,proto3" json:"Usize,omitempty"`
-	Fsize                int64    `protobuf:"varint,3,opt,name=Fsize,proto3" json:"Fsize,omitempty"`
+	Tsize                int64    `protobuf:"varint,1,opt,name=Tsize,json=tsize,proto3" json:"Tsize,omitempty"`
+	Usize                int64    `protobuf:"varint,2,opt,name=Usize,json=usize,proto3" json:"Usize,omitempty"`
+	Fsize                int64    `protobuf:"varint,3,opt,name=Fsize,json=fsize,proto3" json:"Fsize,omitempty"`
 	XXX_NoUnkeyedLiteral struct{} `json:"-"`
 	XXX_unrecognized     []byte   `json:"-"`
 	XXX_sizecache        int32    `json:"-"`
@@ -352,6 +352,577 @@ func (m *Diskinfo) GetDiskinfo() map[string]string {
 	return nil
 }
 
+type IscsiDiscoveryRequest struct {
+	Host                 string   `protobuf:"bytes,1,opt,name=host,proto3" json:"host,omitempty"`
+	Port                 string   `protobuf:"bytes,2,opt,name=port,proto3" json:"port,omitempty"`
+	Iqn                  string   `protobuf:"bytes,3,opt,name=iqn,proto3" json:"iqn,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *IscsiDiscoveryRequest) Reset()         { *m = IscsiDiscoveryRequest{} }
+func (m *IscsiDiscoveryRequest) String() string { return proto.CompactTextString(m) }
+func (*IscsiDiscoveryRequest) ProtoMessage()    {}
+func (*IscsiDiscoveryRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b5331ae4b8115762, []int{8}
+}
+
+func (m *IscsiDiscoveryRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IscsiDiscoveryRequest.Unmarshal(m, b)
+}
+func (m *IscsiDiscoveryRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IscsiDiscoveryRequest.Marshal(b, m, deterministic)
+}
+func (m *IscsiDiscoveryRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IscsiDiscoveryRequest.Merge(m, src)
+}
+func (m *IscsiDiscoveryRequest) XXX_Size() int {
+	return xxx_messageInfo_IscsiDiscoveryRequest.Size(m)
+}
+func (m *IscsiDiscoveryRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_IscsiDiscoveryRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IscsiDiscoveryRequest proto.InternalMessageInfo
+
+func (m *IscsiDiscoveryRequest) GetHost() string {
+	if m != nil {
+		return m.Host
+	}
+	return ""
+}
+
+func (m *IscsiDiscoveryRequest) GetPort() string {
+	if m != nil {
+		return m.Port
+	}
+	return ""
+}
+
+func (m *IscsiDiscoveryRequest) GetIqn() string {
+	if m != nil {
+		return m.Iqn
+	}
+	return ""
+}
+
+type IscsiDiscoveryReply struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *IscsiDiscoveryReply) Reset()         { *m = IscsiDiscoveryReply{} }
+func (m *IscsiDiscoveryReply) String() string { return proto.CompactTextString(m) }
+func (*IscsiDiscoveryReply) ProtoMessage()    {}
+func (*IscsiDiscoveryReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b5331ae4b8115762, []int{9}
+}
+
+func (m *IscsiDiscoveryReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IscsiDiscoveryReply.Unmarshal(m, b)
+}
+func (m *IscsiDiscoveryReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IscsiDiscoveryReply.Marshal(b, m, deterministic)
+}
+func (m *IscsiDiscoveryReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IscsiDiscoveryReply.Merge(m, src)
+}
+func (m *IscsiDiscoveryReply) XXX_Size() int {
+	return xxx_messageInfo_IscsiDiscoveryReply.Size(m)
+}
+func (m *IscsiDiscoveryReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_IscsiDiscoveryReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IscsiDiscoveryReply proto.InternalMessageInfo
+
+type IscsiChapRequest struct {
+	Host                 string   `protobuf:"bytes,1,opt,name=host,proto3" json:"host,omitempty"`
+	Port                 string   `protobuf:"bytes,2,opt,name=port,proto3" json:"port,omitempty"`
+	Iqn                  string   `protobuf:"bytes,3,opt,name=iqn,proto3" json:"iqn,omitempty"`
+	Username             string   `protobuf:"bytes,4,opt,name=username,proto3" json:"username,omitempty"`
+	Password             string   `protobuf:"bytes,5,opt,name=password,proto3" json:"password,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *IscsiChapRequest) Reset()         { *m = IscsiChapRequest{} }
+func (m *IscsiChapRequest) String() string { return proto.CompactTextString(m) }
+func (*IscsiChapRequest) ProtoMessage()    {}
+func (*IscsiChapRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b5331ae4b8115762, []int{10}
+}
+
+func (m *IscsiChapRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IscsiChapRequest.Unmarshal(m, b)
+}
+func (m *IscsiChapRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IscsiChapRequest.Marshal(b, m, deterministic)
+}
+func (m *IscsiChapRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IscsiChapRequest.Merge(m, src)
+}
+func (m *IscsiChapRequest) XXX_Size() int {
+	return xxx_messageInfo_IscsiChapRequest.Size(m)
+}
+func (m *IscsiChapRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_IscsiChapRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IscsiChapRequest proto.InternalMessageInfo
+
+func (m *IscsiChapRequest) GetHost() string {
+	if m != nil {
+		return m.Host
+	}
+	return ""
+}
+
+func (m *IscsiChapRequest) GetPort() string {
+	if m != nil {
+		return m.Port
+	}
+	return ""
+}
+
+func (m *IscsiChapRequest) GetIqn() string {
+	if m != nil {
+		return m.Iqn
+	}
+	return ""
+}
+
+func (m *IscsiChapRequest) GetUsername() string {
+	if m != nil {
+		return m.Username
+	}
+	return ""
+}
+
+func (m *IscsiChapRequest) GetPassword() string {
+	if m != nil {
+		return m.Password
+	}
+	return ""
+}
+
+type IscsiChapReply struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *IscsiChapReply) Reset()         { *m = IscsiChapReply{} }
+func (m *IscsiChapReply) String() string { return proto.CompactTextString(m) }
+func (*IscsiChapReply) ProtoMessage()    {}
+func (*IscsiChapReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b5331ae4b8115762, []int{11}
+}
+
+func (m *IscsiChapReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IscsiChapReply.Unmarshal(m, b)
+}
+func (m *IscsiChapReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IscsiChapReply.Marshal(b, m, deterministic)
+}
+func (m *IscsiChapReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IscsiChapReply.Merge(m, src)
+}
+func (m *IscsiChapReply) XXX_Size() int {
+	return xxx_messageInfo_IscsiChapReply.Size(m)
+}
+func (m *IscsiChapReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_IscsiChapReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IscsiChapReply proto.InternalMessageInfo
+
+type IscsiLoginRequest struct {
+	Host                 string   `protobuf:"bytes,1,opt,name=host,proto3" json:"host,omitempty"`
+	Port                 string   `protobuf:"bytes,2,opt,name=port,proto3" json:"port,omitempty"`
+	Iqn                  string   `protobuf:"bytes,3,opt,name=iqn,proto3" json:"iqn,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *IscsiLoginRequest) Reset()         { *m = IscsiLoginRequest{} }
+func (m *IscsiLoginRequest) String() string { return proto.CompactTextString(m) }
+func (*IscsiLoginRequest) ProtoMessage()    {}
+func (*IscsiLoginRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b5331ae4b8115762, []int{12}
+}
+
+func (m *IscsiLoginRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IscsiLoginRequest.Unmarshal(m, b)
+}
+func (m *IscsiLoginRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IscsiLoginRequest.Marshal(b, m, deterministic)
+}
+func (m *IscsiLoginRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IscsiLoginRequest.Merge(m, src)
+}
+func (m *IscsiLoginRequest) XXX_Size() int {
+	return xxx_messageInfo_IscsiLoginRequest.Size(m)
+}
+func (m *IscsiLoginRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_IscsiLoginRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IscsiLoginRequest proto.InternalMessageInfo
+
+func (m *IscsiLoginRequest) GetHost() string {
+	if m != nil {
+		return m.Host
+	}
+	return ""
+}
+
+func (m *IscsiLoginRequest) GetPort() string {
+	if m != nil {
+		return m.Port
+	}
+	return ""
+}
+
+func (m *IscsiLoginRequest) GetIqn() string {
+	if m != nil {
+		return m.Iqn
+	}
+	return ""
+}
+
+type IscsiLoginReply struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *IscsiLoginReply) Reset()         { *m = IscsiLoginReply{} }
+func (m *IscsiLoginReply) String() string { return proto.CompactTextString(m) }
+func (*IscsiLoginReply) ProtoMessage()    {}
+func (*IscsiLoginReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b5331ae4b8115762, []int{13}
+}
+
+func (m *IscsiLoginReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IscsiLoginReply.Unmarshal(m, b)
+}
+func (m *IscsiLoginReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IscsiLoginReply.Marshal(b, m, deterministic)
+}
+func (m *IscsiLoginReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IscsiLoginReply.Merge(m, src)
+}
+func (m *IscsiLoginReply) XXX_Size() int {
+	return xxx_messageInfo_IscsiLoginReply.Size(m)
+}
+func (m *IscsiLoginReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_IscsiLoginReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IscsiLoginReply proto.InternalMessageInfo
+
+type IscsiLogoutRequest struct {
+	Host                 string   `protobuf:"bytes,1,opt,name=host,proto3" json:"host,omitempty"`
+	Port                 string   `protobuf:"bytes,2,opt,name=port,proto3" json:"port,omitempty"`
+	Iqn                  string   `protobuf:"bytes,3,opt,name=iqn,proto3" json:"iqn,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *IscsiLogoutRequest) Reset()         { *m = IscsiLogoutRequest{} }
+func (m *IscsiLogoutRequest) String() string { return proto.CompactTextString(m) }
+func (*IscsiLogoutRequest) ProtoMessage()    {}
+func (*IscsiLogoutRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b5331ae4b8115762, []int{14}
+}
+
+func (m *IscsiLogoutRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IscsiLogoutRequest.Unmarshal(m, b)
+}
+func (m *IscsiLogoutRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IscsiLogoutRequest.Marshal(b, m, deterministic)
+}
+func (m *IscsiLogoutRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IscsiLogoutRequest.Merge(m, src)
+}
+func (m *IscsiLogoutRequest) XXX_Size() int {
+	return xxx_messageInfo_IscsiLogoutRequest.Size(m)
+}
+func (m *IscsiLogoutRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_IscsiLogoutRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IscsiLogoutRequest proto.InternalMessageInfo
+
+func (m *IscsiLogoutRequest) GetHost() string {
+	if m != nil {
+		return m.Host
+	}
+	return ""
+}
+
+func (m *IscsiLogoutRequest) GetPort() string {
+	if m != nil {
+		return m.Port
+	}
+	return ""
+}
+
+func (m *IscsiLogoutRequest) GetIqn() string {
+	if m != nil {
+		return m.Iqn
+	}
+	return ""
+}
+
+type IscsiLogoutReply struct {
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *IscsiLogoutReply) Reset()         { *m = IscsiLogoutReply{} }
+func (m *IscsiLogoutReply) String() string { return proto.CompactTextString(m) }
+func (*IscsiLogoutReply) ProtoMessage()    {}
+func (*IscsiLogoutReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b5331ae4b8115762, []int{15}
+}
+
+func (m *IscsiLogoutReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IscsiLogoutReply.Unmarshal(m, b)
+}
+func (m *IscsiLogoutReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IscsiLogoutReply.Marshal(b, m, deterministic)
+}
+func (m *IscsiLogoutReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IscsiLogoutReply.Merge(m, src)
+}
+func (m *IscsiLogoutReply) XXX_Size() int {
+	return xxx_messageInfo_IscsiLogoutReply.Size(m)
+}
+func (m *IscsiLogoutReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_IscsiLogoutReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IscsiLogoutReply proto.InternalMessageInfo
+
+type IscsiGetBlocksRequest struct {
+	Host                 string   `protobuf:"bytes,1,opt,name=host,proto3" json:"host,omitempty"`
+	Port                 string   `protobuf:"bytes,2,opt,name=port,proto3" json:"port,omitempty"`
+	Iqn                  string   `protobuf:"bytes,3,opt,name=iqn,proto3" json:"iqn,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *IscsiGetBlocksRequest) Reset()         { *m = IscsiGetBlocksRequest{} }
+func (m *IscsiGetBlocksRequest) String() string { return proto.CompactTextString(m) }
+func (*IscsiGetBlocksRequest) ProtoMessage()    {}
+func (*IscsiGetBlocksRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b5331ae4b8115762, []int{16}
+}
+
+func (m *IscsiGetBlocksRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IscsiGetBlocksRequest.Unmarshal(m, b)
+}
+func (m *IscsiGetBlocksRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IscsiGetBlocksRequest.Marshal(b, m, deterministic)
+}
+func (m *IscsiGetBlocksRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IscsiGetBlocksRequest.Merge(m, src)
+}
+func (m *IscsiGetBlocksRequest) XXX_Size() int {
+	return xxx_messageInfo_IscsiGetBlocksRequest.Size(m)
+}
+func (m *IscsiGetBlocksRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_IscsiGetBlocksRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IscsiGetBlocksRequest proto.InternalMessageInfo
+
+func (m *IscsiGetBlocksRequest) GetHost() string {
+	if m != nil {
+		return m.Host
+	}
+	return ""
+}
+
+func (m *IscsiGetBlocksRequest) GetPort() string {
+	if m != nil {
+		return m.Port
+	}
+	return ""
+}
+
+func (m *IscsiGetBlocksRequest) GetIqn() string {
+	if m != nil {
+		return m.Iqn
+	}
+	return ""
+}
+
+type IscsiGetBlocksReply struct {
+	IscsiBlock           map[string]*IscsiDevice `protobuf:"bytes,1,rep,name=iscsiBlock,proto3" json:"iscsiBlock,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	XXX_NoUnkeyedLiteral struct{}                `json:"-"`
+	XXX_unrecognized     []byte                  `json:"-"`
+	XXX_sizecache        int32                   `json:"-"`
+}
+
+func (m *IscsiGetBlocksReply) Reset()         { *m = IscsiGetBlocksReply{} }
+func (m *IscsiGetBlocksReply) String() string { return proto.CompactTextString(m) }
+func (*IscsiGetBlocksReply) ProtoMessage()    {}
+func (*IscsiGetBlocksReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b5331ae4b8115762, []int{17}
+}
+
+func (m *IscsiGetBlocksReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IscsiGetBlocksReply.Unmarshal(m, b)
+}
+func (m *IscsiGetBlocksReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IscsiGetBlocksReply.Marshal(b, m, deterministic)
+}
+func (m *IscsiGetBlocksReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IscsiGetBlocksReply.Merge(m, src)
+}
+func (m *IscsiGetBlocksReply) XXX_Size() int {
+	return xxx_messageInfo_IscsiGetBlocksReply.Size(m)
+}
+func (m *IscsiGetBlocksReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_IscsiGetBlocksReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IscsiGetBlocksReply proto.InternalMessageInfo
+
+func (m *IscsiGetBlocksReply) GetIscsiBlock() map[string]*IscsiDevice {
+	if m != nil {
+		return m.IscsiBlock
+	}
+	return nil
+}
+
+type IscsiDevice struct {
+	Blocks               []string `protobuf:"bytes,1,rep,name=blocks,proto3" json:"blocks,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *IscsiDevice) Reset()         { *m = IscsiDevice{} }
+func (m *IscsiDevice) String() string { return proto.CompactTextString(m) }
+func (*IscsiDevice) ProtoMessage()    {}
+func (*IscsiDevice) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b5331ae4b8115762, []int{18}
+}
+
+func (m *IscsiDevice) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IscsiDevice.Unmarshal(m, b)
+}
+func (m *IscsiDevice) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IscsiDevice.Marshal(b, m, deterministic)
+}
+func (m *IscsiDevice) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IscsiDevice.Merge(m, src)
+}
+func (m *IscsiDevice) XXX_Size() int {
+	return xxx_messageInfo_IscsiDevice.Size(m)
+}
+func (m *IscsiDevice) XXX_DiscardUnknown() {
+	xxx_messageInfo_IscsiDevice.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IscsiDevice proto.InternalMessageInfo
+
+func (m *IscsiDevice) GetBlocks() []string {
+	if m != nil {
+		return m.Blocks
+	}
+	return nil
+}
+
+type IscsiGetMultipathsRequest struct {
+	Devs                 []string `protobuf:"bytes,1,rep,name=devs,proto3" json:"devs,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *IscsiGetMultipathsRequest) Reset()         { *m = IscsiGetMultipathsRequest{} }
+func (m *IscsiGetMultipathsRequest) String() string { return proto.CompactTextString(m) }
+func (*IscsiGetMultipathsRequest) ProtoMessage()    {}
+func (*IscsiGetMultipathsRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b5331ae4b8115762, []int{19}
+}
+
+func (m *IscsiGetMultipathsRequest) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IscsiGetMultipathsRequest.Unmarshal(m, b)
+}
+func (m *IscsiGetMultipathsRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IscsiGetMultipathsRequest.Marshal(b, m, deterministic)
+}
+func (m *IscsiGetMultipathsRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IscsiGetMultipathsRequest.Merge(m, src)
+}
+func (m *IscsiGetMultipathsRequest) XXX_Size() int {
+	return xxx_messageInfo_IscsiGetMultipathsRequest.Size(m)
+}
+func (m *IscsiGetMultipathsRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_IscsiGetMultipathsRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IscsiGetMultipathsRequest proto.InternalMessageInfo
+
+func (m *IscsiGetMultipathsRequest) GetDevs() []string {
+	if m != nil {
+		return m.Devs
+	}
+	return nil
+}
+
+type IscsiGetMultipathsReply struct {
+	Dev                  string   `protobuf:"bytes,1,opt,name=dev,proto3" json:"dev,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *IscsiGetMultipathsReply) Reset()         { *m = IscsiGetMultipathsReply{} }
+func (m *IscsiGetMultipathsReply) String() string { return proto.CompactTextString(m) }
+func (*IscsiGetMultipathsReply) ProtoMessage()    {}
+func (*IscsiGetMultipathsReply) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b5331ae4b8115762, []int{20}
+}
+
+func (m *IscsiGetMultipathsReply) XXX_Unmarshal(b []byte) error {
+	return xxx_messageInfo_IscsiGetMultipathsReply.Unmarshal(m, b)
+}
+func (m *IscsiGetMultipathsReply) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	return xxx_messageInfo_IscsiGetMultipathsReply.Marshal(b, m, deterministic)
+}
+func (m *IscsiGetMultipathsReply) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_IscsiGetMultipathsReply.Merge(m, src)
+}
+func (m *IscsiGetMultipathsReply) XXX_Size() int {
+	return xxx_messageInfo_IscsiGetMultipathsReply.Size(m)
+}
+func (m *IscsiGetMultipathsReply) XXX_DiscardUnknown() {
+	xxx_messageInfo_IscsiGetMultipathsReply.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_IscsiGetMultipathsReply proto.InternalMessageInfo
+
+func (m *IscsiGetMultipathsReply) GetDev() string {
+	if m != nil {
+		return m.Dev
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*GetDirectorySizeRequest)(nil), "nodeagent.GetDirectorySizeRequest")
 	proto.RegisterType((*GetDirectorySizeReply)(nil), "nodeagent.GetDirectorySizeReply")
@@ -365,49 +936,85 @@ func init() {
 	proto.RegisterMapType((map[string]*Diskinfo)(nil), "nodeagent.GetDisksInfoReply.InfosEntry")
 	proto.RegisterType((*Diskinfo)(nil), "nodeagent.diskinfo")
 	proto.RegisterMapType((map[string]string)(nil), "nodeagent.diskinfo.DiskinfoEntry")
+	proto.RegisterType((*IscsiDiscoveryRequest)(nil), "nodeagent.IscsiDiscoveryRequest")
+	proto.RegisterType((*IscsiDiscoveryReply)(nil), "nodeagent.IscsiDiscoveryReply")
+	proto.RegisterType((*IscsiChapRequest)(nil), "nodeagent.IscsiChapRequest")
+	proto.RegisterType((*IscsiChapReply)(nil), "nodeagent.IscsiChapReply")
+	proto.RegisterType((*IscsiLoginRequest)(nil), "nodeagent.IscsiLoginRequest")
+	proto.RegisterType((*IscsiLoginReply)(nil), "nodeagent.IscsiLoginReply")
+	proto.RegisterType((*IscsiLogoutRequest)(nil), "nodeagent.IscsiLogoutRequest")
+	proto.RegisterType((*IscsiLogoutReply)(nil), "nodeagent.IscsiLogoutReply")
+	proto.RegisterType((*IscsiGetBlocksRequest)(nil), "nodeagent.IscsiGetBlocksRequest")
+	proto.RegisterType((*IscsiGetBlocksReply)(nil), "nodeagent.IscsiGetBlocksReply")
+	proto.RegisterMapType((map[string]*IscsiDevice)(nil), "nodeagent.IscsiGetBlocksReply.IscsiBlockEntry")
+	proto.RegisterType((*IscsiDevice)(nil), "nodeagent.iscsiDevice")
+	proto.RegisterType((*IscsiGetMultipathsRequest)(nil), "nodeagent.IscsiGetMultipathsRequest")
+	proto.RegisterType((*IscsiGetMultipathsReply)(nil), "nodeagent.IscsiGetMultipathsReply")
 }
 
 func init() { proto.RegisterFile("nodeagent.proto", fileDescriptor_b5331ae4b8115762) }
 
 var fileDescriptor_b5331ae4b8115762 = []byte{
-	// 440 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x54, 0x4f, 0x8f, 0xd2, 0x40,
-	0x14, 0x67, 0xa8, 0x35, 0xf6, 0xa1, 0x11, 0x07, 0x8c, 0x48, 0x8c, 0xa9, 0x13, 0xa3, 0x10, 0x43,
-	0x13, 0xf1, 0x42, 0x34, 0x1c, 0x88, 0x28, 0xc1, 0x04, 0x0e, 0x55, 0x2e, 0x9e, 0x44, 0x19, 0xb5,
-	0x81, 0x74, 0xba, 0x9d, 0x61, 0x93, 0xf2, 0x01, 0xf6, 0x13, 0xec, 0x65, 0x8f, 0x7b, 0xdd, 0x4f,
-	0xb9, 0x99, 0x99, 0x02, 0x53, 0xe8, 0xd2, 0xdb, 0x7b, 0xbf, 0xbe, 0x7f, 0xbf, 0xf7, 0x7b, 0x53,
-	0x78, 0x1c, 0xb2, 0x05, 0x9d, 0xff, 0xa3, 0xa1, 0xf0, 0xa2, 0x98, 0x09, 0x86, 0x9d, 0x1d, 0x40,
-	0x3a, 0xf0, 0x6c, 0x44, 0xc5, 0x30, 0x88, 0xe9, 0x1f, 0xc1, 0xe2, 0xe4, 0x7b, 0xb0, 0xa1, 0x3e,
-	0x3d, 0x5b, 0x53, 0x2e, 0x30, 0x86, 0x7b, 0xd1, 0x5c, 0xfc, 0x6f, 0x20, 0x17, 0xb5, 0x1c, 0x5f,
-	0xd9, 0xe4, 0x12, 0xc1, 0xd3, 0xe3, 0xf8, 0x68, 0x95, 0xe0, 0x01, 0xd8, 0x41, 0xf8, 0x97, 0xf1,
-	0x06, 0x72, 0xad, 0x56, 0xa5, 0xfb, 0xce, 0xdb, 0x37, 0xcd, 0x4d, 0xf0, 0xc6, 0x32, 0xfa, 0x4b,
-	0x28, 0xe2, 0xc4, 0xd7, 0x99, 0xcd, 0x1e, 0xc0, 0x1e, 0xc4, 0x55, 0xb0, 0x96, 0x34, 0x49, 0xbb,
-	0x4b, 0x13, 0xd7, 0xc1, 0x3e, 0x9f, 0xaf, 0xd6, 0xb4, 0x51, 0x76, 0x51, 0xcb, 0xf2, 0xb5, 0xf3,
-	0xb1, 0xdc, 0x43, 0xe4, 0x3d, 0x3c, 0x1f, 0x51, 0x31, 0x61, 0xeb, 0x50, 0x44, 0x2c, 0x08, 0x05,
-	0x37, 0x79, 0xd4, 0xc1, 0x96, 0xb3, 0xeb, 0xc9, 0x1c, 0x5f, 0x3b, 0xe4, 0x06, 0x29, 0xe6, 0x47,
-	0x39, 0x92, 0xcb, 0xe7, 0x2c, 0x97, 0x4e, 0x96, 0x4b, 0x5e, 0x4a, 0x0e, 0x9b, 0x6f, 0x05, 0x6c,
-	0xde, 0x98, 0x6c, 0x2a, 0xdd, 0xaa, 0xd1, 0x84, 0x07, 0x1b, 0xca, 0x4d, 0x7e, 0x63, 0xb0, 0x15,
-	0x26, 0xb9, 0xfc, 0x90, 0x96, 0x2a, 0x64, 0xf9, 0xda, 0x91, 0xe8, 0x4c, 0xa1, 0xe9, 0x62, 0x66,
-	0x5b, 0xf4, 0xab, 0x42, 0x2d, 0x8d, 0x2a, 0x87, 0xb4, 0xa1, 0xa6, 0xf4, 0xe0, 0x4b, 0x2e, 0xc7,
-	0x33, 0xc4, 0x5e, 0x04, 0x7c, 0xb9, 0x15, 0x5b, 0xda, 0xe4, 0x1a, 0xc1, 0x93, 0x6c, 0xac, 0x5c,
-	0x4e, 0x3f, 0xbb, 0x9c, 0xb7, 0x87, 0x42, 0x9b, 0xc1, 0x39, 0x6b, 0x99, 0x14, 0xac, 0xa5, 0x9d,
-	0x5d, 0x4b, 0xcd, 0x28, 0x2f, 0x87, 0x92, 0x45, 0xcc, 0xcd, 0x5c, 0x20, 0x78, 0xb0, 0xc5, 0x71,
-	0x7f, 0x6f, 0xa7, 0xd3, 0xbd, 0xca, 0x49, 0xf7, 0x86, 0xa9, 0xa1, 0xe7, 0xda, 0xa5, 0x34, 0x3f,
-	0xc1, 0xa3, 0xcc, 0xa7, 0xa2, 0x13, 0x74, 0x8c, 0x41, 0xba, 0x57, 0x65, 0x70, 0xa6, 0x6c, 0x41,
-	0x07, 0xb2, 0x17, 0xfe, 0x09, 0xd5, 0xc3, 0xab, 0xc7, 0xe4, 0xe4, 0x93, 0x50, 0x32, 0x34, 0xdd,
-	0xa2, 0x67, 0x43, 0x4a, 0xf8, 0x17, 0xe0, 0xe3, 0x2b, 0xc4, 0xaf, 0x0b, 0x8e, 0x54, 0xd7, 0x27,
-	0xc5, 0xa7, 0x4c, 0x4a, 0x78, 0x0a, 0x0f, 0x4d, 0x29, 0xf1, 0xcb, 0x3b, 0x35, 0xd6, 0x55, 0x5f,
-	0x9c, 0xba, 0x01, 0x52, 0xfa, 0x7d, 0x5f, 0xfd, 0x76, 0x3e, 0xdc, 0x06, 0x00, 0x00, 0xff, 0xff,
-	0x03, 0x46, 0x02, 0xda, 0x89, 0x04, 0x00, 0x00,
+	// 786 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xa4, 0x56, 0xcd, 0x52, 0x13, 0x4b,
+	0x14, 0xce, 0x10, 0x42, 0x31, 0x27, 0xf7, 0x5e, 0x42, 0xf3, 0x17, 0x06, 0x2e, 0x95, 0xdb, 0x75,
+	0x55, 0x28, 0x24, 0x96, 0xb8, 0xa1, 0xb4, 0x58, 0x20, 0x41, 0x44, 0x4d, 0xaa, 0x1c, 0x61, 0xe3,
+	0xca, 0x90, 0x34, 0xd0, 0x95, 0x38, 0x3d, 0x4c, 0xf7, 0xc4, 0x0a, 0x6b, 0xf5, 0x09, 0x7c, 0x01,
+	0xb7, 0x3e, 0x83, 0x0f, 0x67, 0x75, 0xf7, 0x4c, 0xd2, 0x33, 0x99, 0x90, 0x45, 0x76, 0xa7, 0xbf,
+	0x3e, 0xbf, 0x5f, 0x9f, 0x73, 0x66, 0x60, 0xc1, 0x63, 0x6d, 0xd2, 0xbc, 0x26, 0x9e, 0xa8, 0xfa,
+	0x01, 0x13, 0x0c, 0xd9, 0x03, 0x00, 0xef, 0xc1, 0xda, 0x29, 0x11, 0x35, 0x1a, 0x90, 0x96, 0x60,
+	0x41, 0xff, 0x03, 0xbd, 0x23, 0x2e, 0xb9, 0x0d, 0x09, 0x17, 0x08, 0xc1, 0xac, 0xdf, 0x14, 0x37,
+	0x65, 0xab, 0x62, 0x6d, 0xdb, 0xae, 0x92, 0xf1, 0x0f, 0x0b, 0x56, 0x46, 0xf5, 0xfd, 0x6e, 0x1f,
+	0x1d, 0x41, 0x81, 0x7a, 0x57, 0x8c, 0x97, 0xad, 0x4a, 0x7e, 0xbb, 0xb8, 0xbf, 0x5b, 0x1d, 0x06,
+	0xcd, 0x34, 0xa8, 0x9e, 0x49, 0xed, 0x13, 0x4f, 0x04, 0x7d, 0x57, 0x5b, 0x3a, 0x07, 0x00, 0x43,
+	0x10, 0x95, 0x20, 0xdf, 0x21, 0xfd, 0x28, 0xba, 0x14, 0xd1, 0x32, 0x14, 0x7a, 0xcd, 0x6e, 0x48,
+	0xca, 0x33, 0x15, 0x6b, 0x3b, 0xef, 0xea, 0xc3, 0xf3, 0x99, 0x03, 0x0b, 0x3f, 0x85, 0xf5, 0x53,
+	0x22, 0xea, 0x2c, 0xf4, 0x84, 0xcf, 0xa8, 0x27, 0xb8, 0x59, 0xc7, 0x32, 0x14, 0x64, 0xee, 0x3a,
+	0x33, 0xdb, 0xd5, 0x07, 0xfc, 0xcb, 0x52, 0x95, 0x8f, 0xd8, 0xc8, 0x5a, 0x8e, 0x93, 0xb5, 0xec,
+	0x25, 0x6b, 0xc9, 0x32, 0xc9, 0xa8, 0xe6, 0xcd, 0x84, 0x6a, 0x1e, 0x9a, 0xd5, 0x14, 0xf7, 0x4b,
+	0x46, 0x10, 0x4e, 0xef, 0x08, 0x37, 0xeb, 0x3b, 0x83, 0x82, 0xc2, 0x64, 0x2d, 0xe7, 0x52, 0x52,
+	0x8e, 0xf2, 0x6e, 0x41, 0xc8, 0x83, 0x44, 0x2f, 0x14, 0x1a, 0x11, 0x13, 0xc6, 0xe8, 0x2b, 0x85,
+	0xe6, 0x35, 0x7a, 0x25, 0x0f, 0x78, 0x07, 0x96, 0xd4, 0x7b, 0xf0, 0x0e, 0x97, 0xe9, 0x19, 0x8f,
+	0xdd, 0xa6, 0xbc, 0x13, 0x3f, 0xb6, 0x94, 0xf1, 0x4f, 0x0b, 0x16, 0x93, 0xba, 0x92, 0x9c, 0xc3,
+	0x24, 0x39, 0x8f, 0xd2, 0x0f, 0x6d, 0x2a, 0x67, 0xd0, 0x52, 0x9f, 0x40, 0xcb, 0x4e, 0x92, 0x96,
+	0x25, 0xc3, 0xbd, 0x4c, 0x4a, 0x3a, 0x31, 0x99, 0xf9, 0x6e, 0xc1, 0x7c, 0x8c, 0xa3, 0xc3, 0xa1,
+	0x1c, 0x65, 0xf7, 0x5f, 0x86, 0x79, 0xb5, 0x16, 0x09, 0x3a, 0xaf, 0x81, 0x89, 0xf3, 0x02, 0xfe,
+	0x4e, 0x5c, 0x4d, 0x6a, 0x41, 0xdb, 0x4c, 0xe4, 0x3d, 0xac, 0x9c, 0xf1, 0x16, 0xa7, 0x35, 0xca,
+	0x5b, 0xac, 0x47, 0x82, 0xbe, 0xc1, 0xec, 0x0d, 0xe3, 0x22, 0x66, 0x56, 0xca, 0x6a, 0xb4, 0x58,
+	0x20, 0x22, 0x2f, 0x4a, 0x96, 0xc1, 0xe8, 0xad, 0xa7, 0x1e, 0xcb, 0x76, 0xa5, 0x88, 0x57, 0x60,
+	0x29, 0xed, 0xd2, 0xef, 0xf6, 0xf1, 0x57, 0x0b, 0x4a, 0x0a, 0x3f, 0xbe, 0x69, 0xfa, 0x53, 0x47,
+	0x41, 0x0e, 0xcc, 0x87, 0x9c, 0x04, 0x5e, 0xf3, 0x33, 0x29, 0xcf, 0x2a, 0x78, 0x70, 0x96, 0x77,
+	0x7e, 0x93, 0xf3, 0x2f, 0x2c, 0x68, 0x97, 0x0b, 0xfa, 0x2e, 0x3e, 0xe3, 0x12, 0xfc, 0x63, 0x64,
+	0x21, 0x13, 0xab, 0xc3, 0xa2, 0x42, 0xde, 0xb1, 0x6b, 0xea, 0x4d, 0x5f, 0xfe, 0x22, 0x2c, 0x98,
+	0xee, 0x64, 0x84, 0x06, 0xa0, 0x18, 0x62, 0xa1, 0x98, 0x3e, 0x04, 0x8a, 0x98, 0x8c, 0xfd, 0xc9,
+	0x18, 0xf1, 0x43, 0x9e, 0x12, 0xf1, 0xb2, 0xcb, 0x5a, 0x1d, 0x3e, 0x7d, 0x98, 0xdf, 0x56, 0xf4,
+	0x92, 0x86, 0x4f, 0x39, 0x4a, 0x0d, 0x00, 0x2a, 0x61, 0x85, 0x45, 0x1d, 0x5b, 0x35, 0x3a, 0x36,
+	0xc3, 0x46, 0x63, 0x0a, 0xd0, 0xed, 0x6b, 0x78, 0x70, 0x2e, 0x22, 0xc6, 0x86, 0xd7, 0x19, 0x2d,
+	0xfc, 0x38, 0x39, 0x60, 0xab, 0x46, 0x3c, 0xe5, 0xaa, 0x46, 0x7a, 0xb4, 0x45, 0xcc, 0xd6, 0x7e,
+	0x00, 0x45, 0xe3, 0x06, 0xad, 0xc2, 0xdc, 0xa5, 0x4a, 0x28, 0x5a, 0xa8, 0xd1, 0x09, 0x3f, 0x81,
+	0xf5, 0x38, 0xe1, 0x7a, 0xd8, 0x15, 0x54, 0xed, 0x59, 0x73, 0xbf, 0x90, 0x5e, 0x6c, 0xa2, 0x64,
+	0xbc, 0x0b, 0x6b, 0x59, 0x06, 0x92, 0x99, 0x12, 0xe4, 0xdb, 0xa4, 0x17, 0xa7, 0xdd, 0x26, 0xbd,
+	0xfd, 0x6f, 0x73, 0x60, 0x37, 0x58, 0x9b, 0x1c, 0xc9, 0x4c, 0xd1, 0x47, 0x28, 0xa5, 0xbf, 0x2a,
+	0x08, 0xdf, 0xfb, 0xc9, 0x51, 0x69, 0x38, 0x95, 0x49, 0x9f, 0x25, 0x9c, 0x43, 0x9f, 0x00, 0x8d,
+	0x6e, 0x79, 0xf4, 0xff, 0x84, 0x8f, 0x80, 0xf6, 0x8f, 0x27, 0x7f, 0x2a, 0x70, 0x0e, 0x35, 0xe0,
+	0x2f, 0x73, 0x55, 0xa2, 0xad, 0xb1, 0x3b, 0x54, 0x7b, 0xdd, 0xbc, 0x6f, 0xc7, 0xe2, 0x1c, 0x3a,
+	0x8f, 0x46, 0x71, 0xb0, 0x28, 0x50, 0x25, 0xdd, 0x45, 0xe9, 0xb5, 0xe4, 0x6c, 0xdd, 0xa3, 0xa1,
+	0xbd, 0x9e, 0x80, 0x3d, 0x18, 0x70, 0xb4, 0x91, 0x56, 0x37, 0x96, 0x8f, 0xb3, 0x9e, 0x7d, 0xa9,
+	0xdd, 0xbc, 0x06, 0x18, 0x8e, 0x31, 0xda, 0x4c, 0xab, 0x9a, 0xcb, 0xc2, 0x71, 0xc6, 0xdc, 0x6a,
+	0x4f, 0x6f, 0xa1, 0x68, 0x4c, 0x2b, 0xfa, 0x37, 0x43, 0x79, 0xb8, 0x15, 0x9c, 0x8d, 0x71, 0xd7,
+	0x49, 0xce, 0x06, 0xe3, 0x35, 0xca, 0x59, 0x7a, 0x03, 0x8c, 0x72, 0x96, 0x9c, 0x4d, 0xdd, 0x3b,
+	0xa3, 0x2d, 0x9d, 0xe8, 0x9d, 0xb1, 0x23, 0x92, 0xe8, 0x9d, 0x31, 0x73, 0x81, 0x73, 0x97, 0x73,
+	0xea, 0x17, 0xee, 0xd9, 0x9f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x2d, 0x99, 0x04, 0xe0, 0xd5, 0x09,
+	0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
-var _ grpc.ClientConn
+var _ grpc.ClientConnInterface
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion4
+const _ = grpc.SupportPackageIsVersion6
 
 // NodeAgentClient is the client API for NodeAgent service.
 //
@@ -416,13 +1023,19 @@ type NodeAgentClient interface {
 	GetDirectorySize(ctx context.Context, in *GetDirectorySizeRequest, opts ...grpc.CallOption) (*GetDirectorySizeReply, error)
 	GetMountpointsSize(ctx context.Context, in *GetMountpointsSizeRequest, opts ...grpc.CallOption) (*GetMountpointsSizeReply, error)
 	GetDisksInfo(ctx context.Context, in *GetDisksInfoRequest, opts ...grpc.CallOption) (*GetDisksInfoReply, error)
+	IscsiDiscovery(ctx context.Context, in *IscsiDiscoveryRequest, opts ...grpc.CallOption) (*IscsiDiscoveryReply, error)
+	IscsiChap(ctx context.Context, in *IscsiChapRequest, opts ...grpc.CallOption) (*IscsiChapReply, error)
+	IscsiLogin(ctx context.Context, in *IscsiLoginRequest, opts ...grpc.CallOption) (*IscsiLoginReply, error)
+	IscsiLogout(ctx context.Context, in *IscsiLogoutRequest, opts ...grpc.CallOption) (*IscsiLogoutReply, error)
+	IscsiGetBlocks(ctx context.Context, in *IscsiGetBlocksRequest, opts ...grpc.CallOption) (*IscsiGetBlocksReply, error)
+	IscsiGetMultipaths(ctx context.Context, in *IscsiGetMultipathsRequest, opts ...grpc.CallOption) (*IscsiGetMultipathsReply, error)
 }
 
 type nodeAgentClient struct {
-	cc *grpc.ClientConn
+	cc grpc.ClientConnInterface
 }
 
-func NewNodeAgentClient(cc *grpc.ClientConn) NodeAgentClient {
+func NewNodeAgentClient(cc grpc.ClientConnInterface) NodeAgentClient {
 	return &nodeAgentClient{cc}
 }
 
@@ -453,11 +1066,71 @@ func (c *nodeAgentClient) GetDisksInfo(ctx context.Context, in *GetDisksInfoRequ
 	return out, nil
 }
 
+func (c *nodeAgentClient) IscsiDiscovery(ctx context.Context, in *IscsiDiscoveryRequest, opts ...grpc.CallOption) (*IscsiDiscoveryReply, error) {
+	out := new(IscsiDiscoveryReply)
+	err := c.cc.Invoke(ctx, "/nodeagent.NodeAgent/IscsiDiscovery", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nodeAgentClient) IscsiChap(ctx context.Context, in *IscsiChapRequest, opts ...grpc.CallOption) (*IscsiChapReply, error) {
+	out := new(IscsiChapReply)
+	err := c.cc.Invoke(ctx, "/nodeagent.NodeAgent/IscsiChap", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nodeAgentClient) IscsiLogin(ctx context.Context, in *IscsiLoginRequest, opts ...grpc.CallOption) (*IscsiLoginReply, error) {
+	out := new(IscsiLoginReply)
+	err := c.cc.Invoke(ctx, "/nodeagent.NodeAgent/IscsiLogin", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nodeAgentClient) IscsiLogout(ctx context.Context, in *IscsiLogoutRequest, opts ...grpc.CallOption) (*IscsiLogoutReply, error) {
+	out := new(IscsiLogoutReply)
+	err := c.cc.Invoke(ctx, "/nodeagent.NodeAgent/IscsiLogout", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nodeAgentClient) IscsiGetBlocks(ctx context.Context, in *IscsiGetBlocksRequest, opts ...grpc.CallOption) (*IscsiGetBlocksReply, error) {
+	out := new(IscsiGetBlocksReply)
+	err := c.cc.Invoke(ctx, "/nodeagent.NodeAgent/IscsiGetBlocks", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nodeAgentClient) IscsiGetMultipaths(ctx context.Context, in *IscsiGetMultipathsRequest, opts ...grpc.CallOption) (*IscsiGetMultipathsReply, error) {
+	out := new(IscsiGetMultipathsReply)
+	err := c.cc.Invoke(ctx, "/nodeagent.NodeAgent/IscsiGetMultipaths", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // NodeAgentServer is the server API for NodeAgent service.
 type NodeAgentServer interface {
 	GetDirectorySize(context.Context, *GetDirectorySizeRequest) (*GetDirectorySizeReply, error)
 	GetMountpointsSize(context.Context, *GetMountpointsSizeRequest) (*GetMountpointsSizeReply, error)
 	GetDisksInfo(context.Context, *GetDisksInfoRequest) (*GetDisksInfoReply, error)
+	IscsiDiscovery(context.Context, *IscsiDiscoveryRequest) (*IscsiDiscoveryReply, error)
+	IscsiChap(context.Context, *IscsiChapRequest) (*IscsiChapReply, error)
+	IscsiLogin(context.Context, *IscsiLoginRequest) (*IscsiLoginReply, error)
+	IscsiLogout(context.Context, *IscsiLogoutRequest) (*IscsiLogoutReply, error)
+	IscsiGetBlocks(context.Context, *IscsiGetBlocksRequest) (*IscsiGetBlocksReply, error)
+	IscsiGetMultipaths(context.Context, *IscsiGetMultipathsRequest) (*IscsiGetMultipathsReply, error)
 }
 
 // UnimplementedNodeAgentServer can be embedded to have forward compatible implementations.
@@ -472,6 +1145,24 @@ func (*UnimplementedNodeAgentServer) GetMountpointsSize(ctx context.Context, req
 }
 func (*UnimplementedNodeAgentServer) GetDisksInfo(ctx context.Context, req *GetDisksInfoRequest) (*GetDisksInfoReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDisksInfo not implemented")
+}
+func (*UnimplementedNodeAgentServer) IscsiDiscovery(ctx context.Context, req *IscsiDiscoveryRequest) (*IscsiDiscoveryReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IscsiDiscovery not implemented")
+}
+func (*UnimplementedNodeAgentServer) IscsiChap(ctx context.Context, req *IscsiChapRequest) (*IscsiChapReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IscsiChap not implemented")
+}
+func (*UnimplementedNodeAgentServer) IscsiLogin(ctx context.Context, req *IscsiLoginRequest) (*IscsiLoginReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IscsiLogin not implemented")
+}
+func (*UnimplementedNodeAgentServer) IscsiLogout(ctx context.Context, req *IscsiLogoutRequest) (*IscsiLogoutReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IscsiLogout not implemented")
+}
+func (*UnimplementedNodeAgentServer) IscsiGetBlocks(ctx context.Context, req *IscsiGetBlocksRequest) (*IscsiGetBlocksReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IscsiGetBlocks not implemented")
+}
+func (*UnimplementedNodeAgentServer) IscsiGetMultipaths(ctx context.Context, req *IscsiGetMultipathsRequest) (*IscsiGetMultipathsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method IscsiGetMultipaths not implemented")
 }
 
 func RegisterNodeAgentServer(s *grpc.Server, srv NodeAgentServer) {
@@ -532,6 +1223,114 @@ func _NodeAgent_GetDisksInfo_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _NodeAgent_IscsiDiscovery_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IscsiDiscoveryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NodeAgentServer).IscsiDiscovery(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nodeagent.NodeAgent/IscsiDiscovery",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NodeAgentServer).IscsiDiscovery(ctx, req.(*IscsiDiscoveryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NodeAgent_IscsiChap_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IscsiChapRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NodeAgentServer).IscsiChap(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nodeagent.NodeAgent/IscsiChap",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NodeAgentServer).IscsiChap(ctx, req.(*IscsiChapRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NodeAgent_IscsiLogin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IscsiLoginRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NodeAgentServer).IscsiLogin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nodeagent.NodeAgent/IscsiLogin",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NodeAgentServer).IscsiLogin(ctx, req.(*IscsiLoginRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NodeAgent_IscsiLogout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IscsiLogoutRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NodeAgentServer).IscsiLogout(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nodeagent.NodeAgent/IscsiLogout",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NodeAgentServer).IscsiLogout(ctx, req.(*IscsiLogoutRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NodeAgent_IscsiGetBlocks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IscsiGetBlocksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NodeAgentServer).IscsiGetBlocks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nodeagent.NodeAgent/IscsiGetBlocks",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NodeAgentServer).IscsiGetBlocks(ctx, req.(*IscsiGetBlocksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NodeAgent_IscsiGetMultipaths_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IscsiGetMultipathsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NodeAgentServer).IscsiGetMultipaths(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nodeagent.NodeAgent/IscsiGetMultipaths",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NodeAgentServer).IscsiGetMultipaths(ctx, req.(*IscsiGetMultipathsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _NodeAgent_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "nodeagent.NodeAgent",
 	HandlerType: (*NodeAgentServer)(nil),
@@ -547,6 +1346,30 @@ var _NodeAgent_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetDisksInfo",
 			Handler:    _NodeAgent_GetDisksInfo_Handler,
+		},
+		{
+			MethodName: "IscsiDiscovery",
+			Handler:    _NodeAgent_IscsiDiscovery_Handler,
+		},
+		{
+			MethodName: "IscsiChap",
+			Handler:    _NodeAgent_IscsiChap_Handler,
+		},
+		{
+			MethodName: "IscsiLogin",
+			Handler:    _NodeAgent_IscsiLogin_Handler,
+		},
+		{
+			MethodName: "IscsiLogout",
+			Handler:    _NodeAgent_IscsiLogout_Handler,
+		},
+		{
+			MethodName: "IscsiGetBlocks",
+			Handler:    _NodeAgent_IscsiGetBlocks_Handler,
+		},
+		{
+			MethodName: "IscsiGetMultipaths",
+			Handler:    _NodeAgent_IscsiGetMultipaths_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

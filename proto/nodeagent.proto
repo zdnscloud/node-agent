@@ -14,6 +14,12 @@ service NodeAgent {
  rpc GetDirectorySize(GetDirectorySizeRequest) returns (GetDirectorySizeReply) {}
  rpc GetMountpointsSize(GetMountpointsSizeRequest) returns (GetMountpointsSizeReply) {}
  rpc GetDisksInfo(GetDisksInfoRequest) returns (GetDisksInfoReply) {}
+ rpc IscsiDiscovery(IscsiDiscoveryRequest) returns (IscsiDiscoveryReply) {}
+ rpc IscsiChap(IscsiChapRequest) returns (IscsiChapReply) {}
+ rpc IscsiLogin(IscsiLoginRequest) returns (IscsiLoginReply) {}
+ rpc IscsiLogout(IscsiLogoutRequest) returns (IscsiLogoutReply) {}
+ rpc IscsiGetBlocks(IscsiGetBlocksRequest) returns (IscsiGetBlocksReply) {}
+ rpc IscsiGetMultipaths(IscsiGetMultipathsRequest) returns (IscsiGetMultipathsReply) {}
 }
 
 message GetMountpointsSizeRequest {
@@ -40,4 +46,68 @@ message GetDisksInfoReply{
 
 message diskinfo{
 	map<string,string> diskinfo = 1;
+}
+
+message IscsiDiscoveryRequest{
+	string host = 1;
+	string port = 2;
+	string iqn = 3;
+}
+
+message IscsiDiscoveryReply{
+	//string command_output = 1;
+}
+
+message IscsiChapRequest{
+	string host = 1;
+	string port = 2;
+	string iqn = 3;
+	string username = 4;
+	string password = 5;
+}
+
+message IscsiChapReply{
+	//string command_output = 1;
+}
+
+message IscsiLoginRequest{
+	string host = 1;
+	string port = 2;
+	string iqn = 3;
+}
+
+message IscsiLoginReply{
+	//string command_output = 1;
+}
+
+message IscsiLogoutRequest{
+        string host = 1;
+        string port = 2;
+        string iqn = 3;
+}
+
+message IscsiLogoutReply{
+	//string command_output = 1;
+}
+
+message IscsiGetBlocksRequest{
+	string host = 1;
+	string port = 2;
+	string iqn = 3;
+}
+
+message IscsiGetBlocksReply{
+	map<string, iscsiDevice> iscsiBlock= 1;
+}
+
+message iscsiDevice{
+	repeated string blocks = 1;
+}
+
+message IscsiGetMultipathsRequest{
+	repeated string devs =1;
+}
+
+message IscsiGetMultipathsReply{
+	string dev = 1;
 }
