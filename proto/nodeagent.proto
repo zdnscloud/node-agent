@@ -21,6 +21,7 @@ service NodeAgent {
  rpc IscsiGetBlocks(IscsiGetBlocksRequest) returns (IscsiGetBlocksReply) {}
  rpc IscsiGetMultipaths(IscsiGetMultipathsRequest) returns (IscsiGetMultipathsReply) {}
  rpc ReplaceInitiatorname(ReplaceInitiatornameRequest) returns (ReplaceInitiatornameReply) {}
+ rpc CleanIscsiDevice(CleanIscsiDeviceRequest) returns (CleanIscsiDeviceReply) {}
 }
 
 message GetMountpointsSizeRequest {
@@ -120,3 +121,9 @@ message ReplaceInitiatornameRequest{
 
 message ReplaceInitiatornameReply{
 }
+
+message CleanIscsiDeviceRequest{
+	string device = 1;
+}
+
+message CleanIscsiDeviceReply{}

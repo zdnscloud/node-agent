@@ -17,6 +17,8 @@ const (
 	iscsiBinary     = "iscsiadm"
 	multipathBinary = "multipath"
 	lsscsiBinary    = "lsscsi"
+	dmsetupBinary   = "dmsetup"
+	lsblkBinary     = "lsblk"
 	BUFFERSIZE      = 1000
 )
 
@@ -320,6 +322,42 @@ func getBlockMultipath(dev string) (string, error) {
 		}
 	}
 	return "", errors.New("can not get multipath for device")
+}
+
+func CleanDeviceMapper(device string) error {
+	opts := []string{
+		device,
+		"-n",
+		"-o", "NAME",
+	}
+	output, err := execute(lsblkBinary, opts)
+	if err != nil {
+		return fmt.Errorf("lsblk %s failed. command out: %s, err: %v", device, output, err)
+	}
+	//lsblk /dev/mapper/360a980003237655a413f386d44627467 -n -o NAME
+	//|-abcd--iscsi--group-pvc--793d5e28--0d6a--4433--ab23--9eaed708d53f (dm-4)
+	//|-abcd--iscsi--group-pvc--772b159f--17ac--4413--a442--049608d5e95a (dm-5)
+	//`-abcd--iscsi--group-pvc--a4a9baf4--e375--4acf--b7fe--b8ca6ed5c77e (dm-3)
+	scanner := bufio.NewScanner(strings.NewReader(output))
+	volumeGroupSuffix := "iscsi--group"
+	dms := make([]string, 0)
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.Contains(line, volumeGroupSuffix) {
+			i := strings.Index(line, "-")
+			dm := strings.Fields(line[i+1:])[0]
+			dms = append(dms, dm)
+		}
+	}
+	dmopts := []string{
+		"remove",
+	}
+	dmopts = append(dmopts, dms...)
+	output, err = execute(dmsetupBinary, dmopts)
+	if err != nil {
+		return fmt.Errorf("dmsetup remove %s failed. command out: %s, err: %v", dms, output, err)
+	}
+	return nil
 }
 
 func execute(binary string, args []string) (string, error) {

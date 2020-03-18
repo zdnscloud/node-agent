@@ -101,3 +101,10 @@ func (s Server) ReplaceInitiatorname(ctx context.Context, in *pb.ReplaceInitiato
 	}
 	return &pb.ReplaceInitiatornameReply{}, nil
 }
+
+func (s Server) CleanIscsiDevice(ctx context.Context, in *pb.CleanIscsiDeviceRequest) (*pb.CleanIscsiDeviceReply, error) {
+	if err := command.CleanDeviceMapper(in.Device); err != nil {
+		return nil, err
+	}
+	return &pb.CleanIscsiDeviceReply{}, nil
+}

@@ -15,11 +15,9 @@ import (
 
 func main() {
 	var addr string
-	var clusterAgentAddr string
 	var nodeName string
 
-	flag.StringVar(&addr, "listen", ":80", "server listen address")
-	flag.StringVar(&clusterAgentAddr, "cluster", "cluster-agent.zcloud.svc", "server listen address")
+	flag.StringVar(&addr, "listen", ":9001", "server listen address")
 	flag.StringVar(&nodeName, "node", "", "node name this node agent resides")
 	flag.Parse()
 
@@ -27,8 +25,6 @@ func main() {
 
 	if nodeName == "" {
 		log.Fatalf("node name isn't specified")
-	} else if clusterAgentAddr == "" {
-		log.Fatalf("cluster agent addr isn't specified")
 	}
 
 	lis, err := net.Listen("tcp", addr)
@@ -36,7 +32,7 @@ func main() {
 		log.Fatalf("listen failed:%s", err.Error())
 	}
 
-	clusteragent.StartHeartbeat(clusterAgentAddr, nodeName, addr)
+	clusteragent.StartHeartbeat(nodeName, addr)
 
 	svr := server.NewServer()
 	grpcServer := grpc.NewServer()
