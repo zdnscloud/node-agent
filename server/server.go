@@ -30,7 +30,7 @@ func (s Server) GetMountpointsSize(ctx context.Context, in *pb.GetMountpointsSiz
 }
 
 func (s Server) GetDisksInfo(ctx context.Context, in *pb.GetDisksInfoRequest) (*pb.GetDisksInfoReply, error) {
-	infos, err := command.GetDisksInfo(in.Disk)
+	infos, err := command.GetDisksInfo()
 	return &pb.GetDisksInfoReply{
 		Infos: infos,
 	}, err
@@ -70,7 +70,7 @@ func (s Server) IscsiLogout(ctx context.Context, in *pb.IscsiLogoutRequest) (*pb
 	return &pb.IscsiLogoutReply{}, nil
 }
 func (s Server) IscsiGetBlocks(ctx context.Context, in *pb.IscsiGetBlocksRequest) (*pb.IscsiGetBlocksReply, error) {
-	output, err := command.GetIscsiDevices(in.Host, in.Iqn)
+	output, err := command.GetIscsiDevices(in.Iqn)
 	if err != nil {
 		return nil, err
 	}

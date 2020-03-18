@@ -39,7 +39,6 @@ message sizes{
 }
 
 message GetDisksInfoRequest {
-	string disk = 1;
 }
 
 message GetDisksInfoReply{
@@ -93,8 +92,8 @@ message IscsiLogoutReply{
 }
 
 message IscsiGetBlocksRequest{
-	string host = 1;
-	string port = 2;
+	//string host = 1;
+	//string port = 2;
 	string iqn = 3;
 }
 

@@ -1,7 +1,7 @@
 package command
 
 import (
-	"encoding/json"
+	"bufio"
 	"errors"
 	"fmt"
 	"os/exec"
@@ -11,152 +11,63 @@ import (
 	pb "github.com/zdnscloud/node-agent/proto"
 )
 
-var supportType = []string{"disk"}
-
-type Info struct {
-	Blockdevices []bd `json:"blockdevices"`
-}
-
-type bd struct {
-	NAME       string     `json:"name"`
-	TYPE       string     `json:"type"`
-	SIZE       int64      `json:"size"`
-	PKNAME     string     `json:"pkname"`
-	FSTYPE     string     `json:"fstype"`
-	MOUNTPOINT string     `json:"mountpoint"`
-	CHILDREN   []children `json:"children"`
-	MAJMIN     string     `json:"maj:min"`
-}
-
-type children struct {
-	NAME       string `json:"name"`
-	TYPE       string `json:"type"`
-	SIZE       int64  `json:"size"`
-	PART       string `json:"part"`
-	PKNAME     string `json:"pkname"`
-	MOUNTPOINT string `json:"mountpoint"`
-	FSTYPE     string `json:"fstype"`
-	MAJMIN     string `json:"maj:min"`
-}
-
-func GetDisksInfo(disk string) (map[string]*pb.Diskinfo, error) {
-	infos := make(map[string]*pb.Diskinfo)
-	devs, err := getAllDevs()
+func GetDisksInfo() (map[string]*pb.Diskinfo, error) {
+	infos, err := getDeviceInfo()
 	if err != nil {
-		return infos, err
+		return nil, err
 	}
-	for _, d := range devs {
-		if len(d) == 0 {
+	res := make(map[string]*pb.Diskinfo)
+	for _, info := range infos {
+		diskInfo := make(map[string]string)
+		name := "/dev/" + info.name
+		res[name] = &pb.Diskinfo{
+			Diskinfo: diskInfo,
+		}
+		diskInfo["Size"] = info.size
+		if info.fstype != "" {
+			diskInfo["Filesystem"] = "true"
+		}
+		if info.mountpoint != "" {
+			diskInfo["Mountpoint"] = "true"
+		}
+
+		if info.typ == "part" {
+			output, err := execute("udevadm", []string{"info", "--query=property", name})
+			if err != nil {
+				fmt.Println(err)
+				continue
+			}
+			scanner := bufio.NewScanner(strings.NewReader(output))
+			for scanner.Scan() {
+				line := scanner.Text()
+				if strings.HasPrefix(line, "DEVPATH=") {
+					tmp := strings.Split(line, "/")
+					Parted := tmp[len(tmp)-2]
+					_name := "/dev/" + Parted
+					v, ok := res[_name]
+					if ok {
+						v.Diskinfo["Parted"] = "true"
+					}
+				}
+			}
+		}
+		if info.typ != "disk" {
+			delete(res, name)
 			continue
 		}
-		dev := "/dev/" + d
-		gpt, err := checkGpt(dev)
+		if info.maj != 8 && (info.maj < 240 || info.maj > 254) {
+			delete(res, name)
+			continue
+		}
+		gpt, err := checkGpt(name)
 		if err != nil {
-			return infos, err
+			return nil, err
 		}
 		if gpt {
 			continue
 		}
-		conf := gen(dev)
-		if conf == nil {
-			continue
-		}
-		infos[dev] = &pb.Diskinfo{
-			Diskinfo: conf,
-		}
 	}
-	return infos, nil
-}
-
-func getAllDevs() ([]string, error) {
-	args := []string{
-		"--all",
-		"--noheadings",
-		"--list",
-		"--output",
-		"KNAME",
-	}
-	out, err := exec.Command("lsblk", args...).Output()
-	if err != nil {
-		return nil, errors.New(fmt.Sprintf("get all devices failed, %s ", err.Error()))
-	}
-	return strings.Split(string(out), "\n"), nil
-}
-
-func gen(disk string) map[string]string {
-	args := []string{
-		"--bytes",
-		"-J",
-		"--output",
-		"NAME,TYPE,SIZE,PKNAME,FSTYPE,MOUNTPOINT,MAJ:MIN",
-	}
-	args = append(args, disk)
-	out, err := exec.Command("/bin/lsblk", args...).Output()
-	if err != nil {
-		fmt.Sprintf("get dev %s info failed, %s ", disk, err.Error())
-		return nil
-	}
-	var res Info
-	json.Unmarshal(out, &res)
-	for _, d := range res.Blockdevices {
-		if !checkMaj(d) || !checkType(d) {
-			continue
-		}
-		return conf(d)
-	}
-	return nil
-}
-
-func conf(info bd) map[string]string {
-	cfg := make(map[string]string)
-	mountpoint := "false"
-	fsexist := "false"
-	parted := "false"
-	if len(info.CHILDREN) > 0 {
-		parted = "true"
-		for _, children := range info.CHILDREN {
-			if children.FSTYPE == "" {
-				continue
-			}
-			fsexist = "true"
-			if children.MOUNTPOINT == "" {
-				continue
-			}
-			mountpoint = "true"
-		}
-	}
-	if info.FSTYPE != "" {
-		fsexist = "true"
-	}
-	if info.MOUNTPOINT != "" {
-		mountpoint = "true"
-	}
-	cfg["Size"] = strconv.FormatInt(info.SIZE, 10)
-	cfg["Parted"] = parted
-	cfg["Filesystem"] = fsexist
-	cfg["Mountpoint"] = mountpoint
-	return cfg
-}
-
-func checkMaj(info bd) bool {
-	maj := strings.Split(info.MAJMIN, ":")[0]
-	m, _ := strconv.Atoi(maj)
-	if m == 8 {
-		return true
-	}
-	if m >= 240 && m <= 254 {
-		return true
-	}
-	return false
-}
-
-func checkType(info bd) bool {
-	for _, t := range supportType {
-		if t == info.TYPE {
-			return true
-		}
-	}
-	return false
+	return res, nil
 }
 
 func checkGpt(disk string) (bool, error) {
@@ -180,4 +91,75 @@ func checkGpt(disk string) (bool, error) {
 		}
 	}
 	return false, nil
+}
+
+func getDeviceInfo() ([]Info, error) {
+	/*
+		# lsblk -a --bytes --noheadings -P -o NAME,TYPE,SIZE,FSTYPE,MOUNTPOINT,MAJ:MIN
+		NAME="loop1" TYPE="loop" SIZE="95805440" FSTYPE="squashfs" MOUNTPOINT="" MAJ:MIN="7:1"
+		NAME="vdd" TYPE="disk" SIZE="21474836480" FSTYPE="" MOUNTPOINT="" MAJ:MIN="252:48"
+		NAME="loop6" TYPE="loop" SIZE="" FSTYPE="" MOUNTPOINT="" MAJ:MIN="7:6"
+		NAME="vdb" TYPE="disk" SIZE="21474836480" FSTYPE="" MOUNTPOINT="" MAJ:MIN="252:16"
+		NAME="loop4" TYPE="loop" SIZE="" FSTYPE="" MOUNTPOINT="" MAJ:MIN="7:4"
+		NAME="sr0" TYPE="rom" SIZE="1073741312" FSTYPE="" MOUNTPOINT="" MAJ:MIN="11:0"
+		NAME="loop2" TYPE="loop" SIZE="" FSTYPE="" MOUNTPOINT="" MAJ:MIN="7:2"
+		NAME="loop0" TYPE="loop" SIZE="95748096" FSTYPE="squashfs" MOUNTPOINT="" MAJ:MIN="7:0"
+		NAME="loop7" TYPE="loop" SIZE="" FSTYPE="" MOUNTPOINT="" MAJ:MIN="7:7"
+		NAME="vdc" TYPE="disk" SIZE="21474836480" FSTYPE="" MOUNTPOINT="" MAJ:MIN="252:32"
+		NAME="loop5" TYPE="loop" SIZE="" FSTYPE="" MOUNTPOINT="" MAJ:MIN="7:5"
+		NAME="vda" TYPE="disk" SIZE="53687234560" FSTYPE="" MOUNTPOINT="" MAJ:MIN="252:0"
+		NAME="vda2" TYPE="part" SIZE="53683945472" FSTYPE="ext4" MOUNTPOINT="/dev/termination-log" MAJ:MIN="252:2"
+		NAME="vda1" TYPE="part" SIZE="1048576" FSTYPE="" MOUNTPOINT="" MAJ:MIN="252:1"
+		NAME="loop3" TYPE="loop" SIZE="" FSTYPE="" MOUNTPOINT="" MAJ:MIN="7:3"
+	*/
+	opts := []string{
+		"-a",
+		"--bytes",
+		"--noheadings",
+		"-P",
+		"-o", "NAME,TYPE,SIZE,KNAME,FSTYPE,MOUNTPOINT,MAJ:MIN",
+	}
+	output, err := execute("lsblk", opts)
+	if err != nil {
+		return nil, err
+	}
+	scanner := bufio.NewScanner(strings.NewReader(output))
+	var infos []Info
+	for scanner.Scan() {
+		var info Info
+		tmp := strings.Fields(scanner.Text())
+		for i := 0; i < len(tmp); i++ {
+			h := strings.Split(tmp[i], "=")
+			switch h[0] {
+			case "NAME":
+				info.name = strings.Trim(h[1], "\"")
+			case "TYPE":
+				info.typ = strings.Trim(h[1], "\"")
+			case "SIZE":
+				info.size = strings.Trim(h[1], "\"")
+			case "FSTYPE":
+				info.fstype = strings.Trim(h[1], "\"")
+			case "MOUNTPOINT":
+				info.mountpoint = strings.Trim(h[1], "\"")
+			case "MAJ:MIN":
+				t := strings.Split(strings.Trim(h[1], "\""), ":")
+				j, _ := strconv.Atoi(t[0])
+				i, _ := strconv.Atoi(t[1])
+				info.maj = j
+				info.min = i
+			}
+		}
+		infos = append(infos, info)
+	}
+	return infos, nil
+}
+
+type Info struct {
+	name       string
+	typ        string
+	size       string
+	fstype     string
+	mountpoint string
+	maj        int
+	min        int
 }

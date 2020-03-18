@@ -155,11 +155,11 @@ func LoginTarget(ip, target string) error {
 	return nil
 }
 
-func GetIscsiDevices(ip, target string) (map[string][]string, error) {
+func GetIscsiDevices(target string) (map[string][]string, error) {
 	var err error
 	devs := make(map[string][]string)
 	for i := 0; i < DeviceWaitRetryCounts; i++ {
-		devs, err = findScsiDevice(ip, target)
+		devs, err = findScsiDevice(target)
 		if err == nil {
 			break
 		}
@@ -168,7 +168,7 @@ func GetIscsiDevices(ip, target string) (map[string][]string, error) {
 	return devs, err
 }
 
-func findScsiDevice(ip, target string) (map[string][]string, error) {
+func findScsiDevice(target string) (map[string][]string, error) {
 	devs := make(map[string][]string)
 	opts := []string{
 		"-m", "session",
@@ -180,13 +180,13 @@ func findScsiDevice(ip, target string) (map[string][]string, error) {
 	}
 	scanner := bufio.NewScanner(strings.NewReader(output))
 	targetLine := "Target: " + target
-	ipLine := " " + ip + ":"
+	//ipLine := " " + ip + ":"
 	lunLine := "Lun: "
 	diskPrefix := "Attached scsi disk"
 	stateLine := "State:"
 
 	inTarget := false
-	inIP := false
+	//inIP := false
 	inLun := false
 	var lun string
 	for scanner.Scan() {
@@ -199,11 +199,14 @@ func findScsiDevice(ip, target string) (map[string][]string, error) {
 			inTarget = true
 			continue
 		}
-		if inTarget && strings.Contains(scanner.Text(), ipLine) {
-			inIP = true
-			continue
-		}
-		if inIP && strings.Contains(scanner.Text(), lunLine) {
+		/*
+			if inTarget && strings.Contains(scanner.Text(), ipLine) {
+				inIP = true
+				continue
+			}
+		*/
+		//if inIP && strings.Contains(scanner.Text(), lunLine) {
+		if inTarget && strings.Contains(scanner.Text(), lunLine) {
 			lines := strings.Fields(scanner.Text())
 			lun = lines[len(lines)-1]
 			if _, ok := devs[lun]; !ok {
@@ -317,8 +320,12 @@ func getBlockMultipath(dev string) (string, error) {
 			inList = true
 			continue
 		}
-		if inList && strings.Contains(scanner.Text(), dev) {
-			return strings.Fields(scanner.Text())[0], nil
+		line := scanner.Text()
+		if inList && strings.Contains(line, dev) {
+			tmp := strings.Fields(line)
+			if len(tmp) > 3 && tmp[2] == dev {
+				return tmp[0], nil
+			}
 		}
 	}
 	return "", errors.New("can not get multipath for device")
@@ -348,6 +355,9 @@ func CleanDeviceMapper(device string) error {
 			dm := strings.Fields(line[i+1:])[0]
 			dms = append(dms, dm)
 		}
+	}
+	if len(dms) == 0 {
+		return nil
 	}
 	dmopts := []string{
 		"remove",
@@ -383,7 +393,7 @@ func executeWithTimeout(timeout time.Duration, binary string, args []string) (st
 	case <-time.After(timeout):
 		if cmd.Process != nil {
 			if err := cmd.Process.Kill(); err != nil {
-				fmt.Printf("1111", err)
+				fmt.Sprintf("Problem killing process pid=%v: %s", cmd.Process.Pid, err)
 			}
 
 		}
