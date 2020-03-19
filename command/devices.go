@@ -11,42 +11,38 @@ import (
 	pb "github.com/zdnscloud/node-agent/proto"
 )
 
-func GetDisksInfo() (map[string]*pb.Diskinfo, error) {
+func GetDisksInfo() (map[string]*pb.Disk, error) {
 	infos, err := getDeviceInfo()
 	if err != nil {
 		return nil, err
 	}
-	res := make(map[string]*pb.Diskinfo)
+	res := make(map[string]*pb.Disk)
 	for _, info := range infos {
-		diskInfo := make(map[string]string)
 		name := "/dev/" + info.name
-		res[name] = &pb.Diskinfo{
-			Diskinfo: diskInfo,
-		}
-		diskInfo["Size"] = info.size
+		res[name] = &pb.Disk{}
+		size, _ := strconv.ParseUint(info.size, 10, 64)
+		res[name].Size = size
 		if info.fstype != "" {
-			diskInfo["Filesystem"] = "true"
+			res[name].Filesystem = true
 		}
 		if info.mountpoint != "" {
-			diskInfo["Mountpoint"] = "true"
+			res[name].Mountpoint = true
 		}
 
 		if info.typ == "part" {
 			output, err := execute("udevadm", []string{"info", "--query=property", name})
 			if err != nil {
-				fmt.Println(err)
-				continue
+				return nil, err
 			}
 			scanner := bufio.NewScanner(strings.NewReader(output))
 			for scanner.Scan() {
 				line := scanner.Text()
 				if strings.HasPrefix(line, "DEVPATH=") {
 					tmp := strings.Split(line, "/")
-					Parted := tmp[len(tmp)-2]
-					_name := "/dev/" + Parted
-					v, ok := res[_name]
-					if ok {
-						v.Diskinfo["Parted"] = "true"
+					parted := tmp[len(tmp)-2]
+					_name := "/dev/" + parted
+					if _disk, ok := res[_name]; ok {
+						_disk.Parted = true
 					}
 				}
 			}
@@ -64,6 +60,7 @@ func GetDisksInfo() (map[string]*pb.Diskinfo, error) {
 			return nil, err
 		}
 		if gpt {
+			delete(res, name)
 			continue
 		}
 	}

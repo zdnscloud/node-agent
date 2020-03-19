@@ -2,14 +2,6 @@ syntax = "proto3";
 
 package nodeagent;
 
-message GetDirectorySizeRequest {
-  string path = 1;
-}
-
-message GetDirectorySizeReply{
-	map<string, int64> infos = 1;
-}
-
 service NodeAgent {
  rpc GetDirectorySize(GetDirectorySizeRequest) returns (GetDirectorySizeReply) {}
  rpc GetMountpointsSize(GetMountpointsSizeRequest) returns (GetMountpointsSizeReply) {}
@@ -24,29 +16,39 @@ service NodeAgent {
  rpc CleanIscsiDevice(CleanIscsiDeviceRequest) returns (CleanIscsiDeviceReply) {}
 }
 
+message GetDirectorySizeRequest {
+ 	string path = 1;
+}
+
+message GetDirectorySizeReply{
+	map<string, int64> sizes = 1;
+}
+
 message GetMountpointsSizeRequest {
         repeated string paths = 1;
 }
 
 message GetMountpointsSizeReply{
-	map<string, sizes> infos = 1;
+	map<string, size> sizes = 1;
 }
 
-message sizes{
+message size{
 	int64 Tsize = 1;
 	int64 Usize = 2;
 	int64 Fsize = 3;
 }
 
-message GetDisksInfoRequest {
-}
+message GetDisksInfoRequest {}
 
 message GetDisksInfoReply{
-	map<string, diskinfo> infos = 1;
+	map<string, disk> disks= 1;
 }
 
-message diskinfo{
-	map<string,string> diskinfo = 1;
+message disk{
+	uint64 size = 1;
+	bool parted  = 2;
+	bool filesystem=3;
+	bool mountpoint = 4;
 }
 
 message IscsiDiscoveryRequest{
@@ -55,9 +57,7 @@ message IscsiDiscoveryRequest{
 	string iqn = 3;
 }
 
-message IscsiDiscoveryReply{
-	//string command_output = 1;
-}
+message IscsiDiscoveryReply{}
 
 message IscsiChapRequest{
 	string host = 1;
@@ -67,9 +67,7 @@ message IscsiChapRequest{
 	string password = 5;
 }
 
-message IscsiChapReply{
-	//string command_output = 1;
-}
+message IscsiChapReply{}
 
 message IscsiLoginRequest{
 	string host = 1;
@@ -77,9 +75,7 @@ message IscsiLoginRequest{
 	string iqn = 3;
 }
 
-message IscsiLoginReply{
-	//string command_output = 1;
-}
+message IscsiLoginReply{}
 
 message IscsiLogoutRequest{
         string host = 1;
@@ -87,13 +83,9 @@ message IscsiLogoutRequest{
         string iqn = 3;
 }
 
-message IscsiLogoutReply{
-	//string command_output = 1;
-}
+message IscsiLogoutReply{}
 
 message IscsiGetBlocksRequest{
-	//string host = 1;
-	//string port = 2;
 	string iqn = 3;
 }
 

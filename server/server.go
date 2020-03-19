@@ -16,23 +16,23 @@ func NewServer() Server {
 }
 
 func (s Server) GetDirectorySize(ctx context.Context, in *pb.GetDirectorySizeRequest) (*pb.GetDirectorySizeReply, error) {
-	infos, err := command.GetDirectorySize(in.Path)
+	sizes, err := command.GetDirectorySize(in.Path)
 	return &pb.GetDirectorySizeReply{
-		Infos: infos,
+		Sizes: sizes,
 	}, err
 }
 
 func (s Server) GetMountpointsSize(ctx context.Context, in *pb.GetMountpointsSizeRequest) (*pb.GetMountpointsSizeReply, error) {
-	infos, err := command.GetMountpointsSize(in.Paths)
+	sizes, err := command.GetMountpointsSize(in.Paths)
 	return &pb.GetMountpointsSizeReply{
-		Infos: infos,
+		Sizes: sizes,
 	}, err
 }
 
 func (s Server) GetDisksInfo(ctx context.Context, in *pb.GetDisksInfoRequest) (*pb.GetDisksInfoReply, error) {
-	infos, err := command.GetDisksInfo()
+	disks, err := command.GetDisksInfo()
 	return &pb.GetDisksInfoReply{
-		Infos: infos,
+		Disks: disks,
 	}, err
 }
 
