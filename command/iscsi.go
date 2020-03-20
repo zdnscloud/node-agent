@@ -417,27 +417,54 @@ func CleanDeviceMapper(device string) error {
 	//`-abcd--iscsi--group-pvc--a4a9baf4--e375--4acf--b7fe--b8ca6ed5c77e (dm-3)
 	scanner := bufio.NewScanner(strings.NewReader(output))
 	volumeGroupSuffix := "iscsi--group"
-	dms := make([]string, 0)
+	deleteDms := make([]string, 0)
 	for scanner.Scan() {
 		line := scanner.Text()
 		if strings.Contains(line, volumeGroupSuffix) {
 			i := strings.Index(line, "-")
 			dm := strings.Fields(line[i+1:])[0]
-			dms = append(dms, dm)
+			deleteDms = append(deleteDms, dm)
 		}
 	}
-	if len(dms) == 0 {
+	currentDms, err := getdmsetups()
+	if err != nil {
+		return err
+	}
+	_s := strings.Split(device, "/")
+	_dev := _s[len(_s)-1]
+	for _, dm := range currentDms {
+		if dm == _dev {
+			deleteDms = append(deleteDms, dm)
+		}
+	}
+	if len(deleteDms) == 0 {
 		return nil
 	}
 	dmopts := []string{
 		"remove",
 	}
-	dmopts = append(dmopts, dms...)
+	dmopts = append(dmopts, deleteDms...)
 	output, err = execute(dmsetupBinary, dmopts)
 	if err != nil {
-		return fmt.Errorf("dmsetup remove %s failed. command out: %s, err: %v", dms, output, err)
+		return fmt.Errorf("dmsetup remove failed. command out: %s, err: %v", output, err)
 	}
 	return nil
+}
+
+func getdmsetups() ([]string, error) {
+	opts := []string{
+		"ls",
+	}
+	output, err := execute(dmsetupBinary, opts)
+	if err != nil {
+		return nil, fmt.Errorf("dmsetup list failed. command out: %s, err: %v", output, err)
+	}
+	dms := make([]string, 0)
+	scanner := bufio.NewScanner(strings.NewReader(output))
+	for scanner.Scan() {
+		dms = append(dms, strings.Fields(scanner.Text())[0])
+	}
+	return dms, nil
 }
 
 func execute(binary string, args []string) (string, error) {
