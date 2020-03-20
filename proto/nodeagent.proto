@@ -9,11 +9,15 @@ service NodeAgent {
  rpc IscsiDiscovery(IscsiDiscoveryRequest) returns (IscsiDiscoveryReply) {}
  rpc IscsiChap(IscsiChapRequest) returns (IscsiChapReply) {}
  rpc IscsiLogin(IscsiLoginRequest) returns (IscsiLoginReply) {}
+ rpc IsTargetLoggedIn(IsTargetLoggedInRequest) returns (IsTargetLoggedInReply) {}
  rpc IscsiLogout(IscsiLogoutRequest) returns (IscsiLogoutReply) {}
  rpc IscsiGetBlocks(IscsiGetBlocksRequest) returns (IscsiGetBlocksReply) {}
  rpc IscsiGetMultipaths(IscsiGetMultipathsRequest) returns (IscsiGetMultipathsReply) {}
  rpc ReplaceInitiatorname(ReplaceInitiatornameRequest) returns (ReplaceInitiatornameReply) {}
  rpc CleanIscsiDevice(CleanIscsiDeviceRequest) returns (CleanIscsiDeviceReply) {}
+ rpc AddMultipath(AddMultipathRequest) returns (AddMultipathReply) {}
+ rpc RemoveMultipath(RemoveMultipathRequest) returns (RemoveMultipathReply) {}
+ rpc FlushAllMultipath(FlushAllMultipathRequest) returns (FlushAllMultipathReply) {}
 }
 
 message GetDirectorySizeRequest {
@@ -75,6 +79,16 @@ message IscsiLoginRequest{
 	string iqn = 3;
 }
 
+message IsTargetLoggedInRequest{
+	string host = 1;
+	string port = 2;
+	string iqn = 3;
+}
+
+message IsTargetLoggedInReply{
+	bool login = 1;
+}
+
 message IscsiLoginReply{}
 
 message IscsiLogoutRequest{
@@ -118,3 +132,21 @@ message CleanIscsiDeviceRequest{
 }
 
 message CleanIscsiDeviceReply{}
+
+message FlushAllMultipathRequest{}
+
+message FlushAllMultipathReply{}
+
+message AddMultipathRequest{
+	repeated string devs =1;
+}
+
+message AddMultipathReply{}
+
+message RemoveMultipathRequest{
+	repeated string devs =1;
+}
+
+message RemoveMultipathReply{}
+
+

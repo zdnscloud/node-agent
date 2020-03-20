@@ -155,6 +155,27 @@ func LoginTarget(ip, target string) error {
 	return nil
 }
 
+func IsTargetLoggedIn(ip, target string) (bool, error) {
+	opts := []string{
+		"-m", "session",
+	}
+	output, err := execute(iscsiBinary, opts)
+	if err != nil {
+		return false, err
+	}
+	scanner := bufio.NewScanner(strings.NewReader(output))
+	for scanner.Scan() {
+		line := scanner.Text()
+		if strings.Contains(line, ip) {
+			if strings.HasSuffix(line, " "+target) ||
+				strings.Contains(scanner.Text(), " "+target+" ") {
+				return true, nil
+			}
+		}
+	}
+	return false, nil
+}
+
 func GetIscsiDevices(target string) (map[string][]string, error) {
 	var err error
 	devs := make(map[string][]string)
@@ -245,6 +266,9 @@ func LogoutTarget(ip, target string) error {
 	}
 	output, err := execute(iscsiBinary, opts)
 	if err != nil {
+		if strings.Contains(err.Error(), "exit status 21") {
+			return nil
+		}
 		return fmt.Errorf("turn on chap failed. command out: %s, err: %v", output, err)
 	}
 	return nil
@@ -277,6 +301,45 @@ func CleanupScsiNodes(target string) error {
 				execute("rmdir", []string{filepath.Dir(file)})
 			}
 		}
+	}
+	return nil
+}
+
+func AddMultipath(devs []string) error {
+	for _, dev := range devs {
+		//multipath -a /dev/sdc
+		opts := []string{
+			"-a", dev,
+		}
+		output, err := execute(multipathBinary, opts)
+		if err != nil {
+			return fmt.Errorf("add dev %s to multipath failed. command out: %s, err: %v", dev, output, err)
+		}
+	}
+	return nil
+}
+
+func RemoveMultipath(devs []string) error {
+	for _, dev := range devs {
+		//multipath -w /dev/sdc
+		opts := []string{
+			"-w", dev,
+		}
+		output, err := execute(multipathBinary, opts)
+		if err != nil {
+			return fmt.Errorf("remove dev %s from multipath failed. command out: %s, err: %v", dev, output, err)
+		}
+	}
+	return nil
+}
+
+func FlushAllMultipath() error {
+	opts := []string{
+		"-F",
+	}
+	output, err := execute(multipathBinary, opts)
+	if err != nil {
+		return fmt.Errorf("flush multipath failed. command out: %s, err: %v", output, err)
 	}
 	return nil
 }
@@ -332,6 +395,13 @@ func getBlockMultipath(dev string) (string, error) {
 }
 
 func CleanDeviceMapper(device string) error {
+	_, err := os.Stat(device)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
 	opts := []string{
 		device,
 		"-n",

@@ -63,6 +63,16 @@ func (s Server) IscsiLogin(ctx context.Context, in *pb.IscsiLoginRequest) (*pb.I
 	}
 	return &pb.IscsiLoginReply{}, nil
 }
+
+func (s Server) IsTargetLoggedIn(ctx context.Context, in *pb.IsTargetLoggedInRequest) (*pb.IsTargetLoggedInReply, error) {
+	ok, err := command.IsTargetLoggedIn(in.Host+":"+in.Port, in.Iqn)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.IsTargetLoggedInReply{
+		Login: ok,
+	}, nil
+}
 func (s Server) IscsiLogout(ctx context.Context, in *pb.IscsiLogoutRequest) (*pb.IscsiLogoutReply, error) {
 	if err := command.LogoutTarget(in.Host+":"+in.Port, in.Iqn); err != nil {
 		return nil, err
@@ -107,4 +117,25 @@ func (s Server) CleanIscsiDevice(ctx context.Context, in *pb.CleanIscsiDeviceReq
 		return nil, err
 	}
 	return &pb.CleanIscsiDeviceReply{}, nil
+}
+
+func (s Server) AddMultipath(ctx context.Context, in *pb.AddMultipathRequest) (*pb.AddMultipathReply, error) {
+	if err := command.AddMultipath(in.Devs); err != nil {
+		return nil, err
+	}
+	return &pb.AddMultipathReply{}, nil
+}
+
+func (s Server) RemoveMultipath(ctx context.Context, in *pb.RemoveMultipathRequest) (*pb.RemoveMultipathReply, error) {
+	if err := command.RemoveMultipath(in.Devs); err != nil {
+		return nil, err
+	}
+	return &pb.RemoveMultipathReply{}, nil
+}
+
+func (s Server) FlushAllMultipath(ctx context.Context, in *pb.FlushAllMultipathRequest) (*pb.FlushAllMultipathReply, error) {
+	if err := command.FlushAllMultipath(); err != nil {
+		return nil, err
+	}
+	return &pb.FlushAllMultipathReply{}, nil
 }
