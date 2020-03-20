@@ -17,7 +17,7 @@ service NodeAgent {
  rpc CleanIscsiDevice(CleanIscsiDeviceRequest) returns (CleanIscsiDeviceReply) {}
  rpc AddMultipath(AddMultipathRequest) returns (AddMultipathReply) {}
  rpc RemoveMultipath(RemoveMultipathRequest) returns (RemoveMultipathReply) {}
- rpc FlushAllMultipath(FlushAllMultipathRequest) returns (FlushAllMultipathReply) {}
+ rpc ReloadMultipath(ReloadMultipathRequest) returns (ReloadMultipathReply) {}
 }
 
 message GetDirectorySizeRequest {
@@ -133,9 +133,9 @@ message CleanIscsiDeviceRequest{
 
 message CleanIscsiDeviceReply{}
 
-message FlushAllMultipathRequest{}
+message ReloadMultipathRequest{}
 
-message FlushAllMultipathReply{}
+message ReloadMultipathReply{}
 
 message AddMultipathRequest{
 	repeated string devs =1;

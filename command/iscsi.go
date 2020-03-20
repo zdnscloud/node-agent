@@ -333,13 +333,13 @@ func RemoveMultipath(devs []string) error {
 	return nil
 }
 
-func FlushAllMultipath() error {
+func ReloadMultipath() error {
 	opts := []string{
-		"-F",
+		"-r",
 	}
 	output, err := execute(multipathBinary, opts)
 	if err != nil {
-		return fmt.Errorf("flush multipath failed. command out: %s, err: %v", output, err)
+		return fmt.Errorf("reload multipath failed. command out: %s, err: %v", output, err)
 	}
 	return nil
 }

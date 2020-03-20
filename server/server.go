@@ -133,9 +133,9 @@ func (s Server) RemoveMultipath(ctx context.Context, in *pb.RemoveMultipathReque
 	return &pb.RemoveMultipathReply{}, nil
 }
 
-func (s Server) FlushAllMultipath(ctx context.Context, in *pb.FlushAllMultipathRequest) (*pb.FlushAllMultipathReply, error) {
-	if err := command.FlushAllMultipath(); err != nil {
+func (s Server) ReloadMultipath(ctx context.Context, in *pb.ReloadMultipathRequest) (*pb.ReloadMultipathReply, error) {
+	if err := command.ReloadMultipath(); err != nil {
 		return nil, err
 	}
-	return &pb.FlushAllMultipathReply{}, nil
+	return &pb.ReloadMultipathReply{}, nil
 }
