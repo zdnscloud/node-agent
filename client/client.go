@@ -25,8 +25,8 @@ func NewClient(addr string, timeout time.Duration) (*NodeAgentClient, error) {
 	}
 
 	return &NodeAgentClient{
-		pb.NewNodeAgentClient(_conn),
-		conn: _conn,
+		NodeAgentClient: pb.NewNodeAgentClient(_conn),
+		conn:            _conn,
 	}, nil
 }
 
