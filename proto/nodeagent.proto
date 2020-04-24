@@ -2,18 +2,30 @@ syntax = "proto3";
 
 package nodeagent;
 
-message GetDirectorySizeRequest {
-  string path = 1;
-}
-
-message GetDirectorySizeReply{
-	map<string, int64> infos = 1;
-}
-
 service NodeAgent {
  rpc GetDirectorySize(GetDirectorySizeRequest) returns (GetDirectorySizeReply) {}
  rpc GetMountpointsSize(GetMountpointsSizeRequest) returns (GetMountpointsSizeReply) {}
  rpc GetDisksInfo(GetDisksInfoRequest) returns (GetDisksInfoReply) {}
+ rpc IscsiDiscovery(IscsiDiscoveryRequest) returns (IscsiDiscoveryReply) {}
+ rpc IscsiChap(IscsiChapRequest) returns (IscsiChapReply) {}
+ rpc IscsiLogin(IscsiLoginRequest) returns (IscsiLoginReply) {}
+ rpc IsTargetLoggedIn(IsTargetLoggedInRequest) returns (IsTargetLoggedInReply) {}
+ rpc IscsiLogout(IscsiLogoutRequest) returns (IscsiLogoutReply) {}
+ rpc IscsiGetBlocks(IscsiGetBlocksRequest) returns (IscsiGetBlocksReply) {}
+ rpc IscsiGetMultipaths(IscsiGetMultipathsRequest) returns (IscsiGetMultipathsReply) {}
+ rpc ReplaceInitiatorname(ReplaceInitiatornameRequest) returns (ReplaceInitiatornameReply) {}
+ rpc CleanIscsiDevice(CleanIscsiDeviceRequest) returns (CleanIscsiDeviceReply) {}
+ rpc AddMultipath(AddMultipathRequest) returns (AddMultipathReply) {}
+ rpc RemoveMultipath(RemoveMultipathRequest) returns (RemoveMultipathReply) {}
+ rpc ReloadMultipath(ReloadMultipathRequest) returns (ReloadMultipathReply) {}
+}
+
+message GetDirectorySizeRequest {
+ 	string path = 1;
+}
+
+message GetDirectorySizeReply{
+	map<string, int64> sizes = 1;
 }
 
 message GetMountpointsSizeRequest {
@@ -21,23 +33,120 @@ message GetMountpointsSizeRequest {
 }
 
 message GetMountpointsSizeReply{
-	map<string, sizes> infos = 1;
+	map<string, size> sizes = 1;
 }
 
-message sizes{
+message size{
 	int64 Tsize = 1;
 	int64 Usize = 2;
 	int64 Fsize = 3;
 }
 
-message GetDisksInfoRequest {
-	string disk = 1;
-}
+message GetDisksInfoRequest {}
 
 message GetDisksInfoReply{
-	map<string, diskinfo> infos = 1;
+	map<string, disk> disks= 1;
 }
 
-message diskinfo{
-	map<string,string> diskinfo = 1;
+message disk{
+	uint64 size = 1;
+	bool parted  = 2;
+	bool filesystem=3;
+	bool mountpoint = 4;
 }
+
+message IscsiDiscoveryRequest{
+	string host = 1;
+	string port = 2;
+	string iqn = 3;
+}
+
+message IscsiDiscoveryReply{}
+
+message IscsiChapRequest{
+	string host = 1;
+	string port = 2;
+	string iqn = 3;
+	string username = 4;
+	string password = 5;
+}
+
+message IscsiChapReply{}
+
+message IscsiLoginRequest{
+	string host = 1;
+	string port = 2;
+	string iqn = 3;
+}
+
+message IsTargetLoggedInRequest{
+	string host = 1;
+	string port = 2;
+	string iqn = 3;
+}
+
+message IsTargetLoggedInReply{
+	bool login = 1;
+}
+
+message IscsiLoginReply{}
+
+message IscsiLogoutRequest{
+        string host = 1;
+        string port = 2;
+        string iqn = 3;
+}
+
+message IscsiLogoutReply{}
+
+message IscsiGetBlocksRequest{
+	string iqn = 3;
+}
+
+message IscsiGetBlocksReply{
+	map<string, iscsiDevice> iscsiBlock= 1;
+}
+
+message iscsiDevice{
+	repeated string blocks = 1;
+}
+
+message IscsiGetMultipathsRequest{
+	repeated string devs =1;
+}
+
+message IscsiGetMultipathsReply{
+	string dev = 1;
+}
+
+message ReplaceInitiatornameRequest{
+	string src_file = 1;
+	string dst_file = 2;
+}
+
+message ReplaceInitiatornameReply{
+}
+
+message CleanIscsiDeviceRequest{
+	string device = 1;
+}
+
+message CleanIscsiDeviceReply{}
+
+message ReloadMultipathRequest{}
+
+message ReloadMultipathReply{}
+
+message AddMultipathRequest{
+	repeated string devs =1;
+}
+
+message AddMultipathReply{}
+
+message RemoveMultipathRequest{
+	repeated string devs =1;
+}
+
+message RemoveMultipathReply{}
+
+

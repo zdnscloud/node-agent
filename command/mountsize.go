@@ -8,8 +8,8 @@ import (
 	pb "github.com/zdnscloud/node-agent/proto"
 )
 
-func GetMountpointsSize(paths []string) (map[string]*pb.Sizes, error) {
-	infos := make(map[string]*pb.Sizes)
+func GetMountpointsSize(paths []string) (map[string]*pb.Size, error) {
+	infos := make(map[string]*pb.Size)
 	out, _ := exec.Command("df", paths...).Output()
 	outputs := strings.Split(string(out), "\n")
 	for i := 1; i < len(outputs); i++ {
@@ -30,7 +30,7 @@ func GetMountpointsSize(paths []string) (map[string]*pb.Sizes, error) {
 		if err != nil {
 			return infos, err
 		}
-		infos[line[num-1]] = &pb.Sizes{
+		infos[line[num-1]] = &pb.Size{
 			Tsize: tsize,
 			Usize: usize,
 			Fsize: fsize,
