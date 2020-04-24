@@ -8,16 +8,28 @@ import (
 	pb "github.com/zdnscloud/node-agent/proto"
 )
 
-func NewClient(addr string, timeout time.Duration) (pb.NodeAgentClient, error) {
+type NodeAgentClient struct {
+	pb.NodeAgentClient
+	conn *grpc.ClientConn
+}
+
+func NewClient(addr string, timeout time.Duration) (*NodeAgentClient, error) {
 	dialOptions := []grpc.DialOption{
 		grpc.WithInsecure(),
 		grpc.WithTimeout(timeout),
 	}
 
-	conn, err := grpc.Dial(addr, dialOptions...)
+	_conn, err := grpc.Dial(addr, dialOptions...)
 	if err != nil {
 		return nil, err
 	}
 
-	return pb.NewNodeAgentClient(conn), nil
+	return &NodeAgentClient{
+		pb.NewNodeAgentClient(_conn),
+		conn: _conn,
+	}, nil
+}
+
+func (c *NodeAgentClient) Close() error {
+	return c.conn.Close()
 }
